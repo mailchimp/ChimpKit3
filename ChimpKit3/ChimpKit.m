@@ -23,13 +23,14 @@
 
 + (ChimpKit *)sharedKit {
 	static dispatch_once_t pred = 0;
-	__strong static id _sharedObject = nil;
+	__strong static ChimpKit *_sharedKit = nil;
 	
 	dispatch_once(&pred, ^{
-		_sharedObject = [[self alloc] init];
+		_sharedKit = [[self alloc] init];
+		_sharedKit.timeoutInterval = kDefaultTimeoutInterval;
 	});
 	
-	return _sharedObject;
+	return _sharedKit;
 }
 
 
@@ -44,7 +45,7 @@
 		if ([apiKeyParts count] > 1) {
 			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/1.3/?method=", [apiKeyParts objectAtIndex:1]];
 		} else {
-			NSAssert(TRUE, @"Please provide a valid API Key");
+			NSAssert(FALSE, @"Please provide a valid API Key");
 		}
 	}
 }

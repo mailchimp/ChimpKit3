@@ -21,6 +21,8 @@
 		3A9A6A8D169B135D00994BE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6A8C169B135D00994BE6 /* ViewController.m */; };
 		3A9A6A9B169B145600994BE6 /* ChimpKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6A9A169B145600994BE6 /* ChimpKit.m */; };
 		3A9A6AAC169B167400994BE6 /* ChimpKitRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6AAB169B167400994BE6 /* ChimpKitRequest.m */; };
+		3A9A6AB2169B262E00994BE6 /* CKAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6AAF169B262E00994BE6 /* CKAuthViewController.m */; };
+		3A9A6AB3169B262E00994BE6 /* CKSubscribeAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,10 @@
 		3A9A6A9A169B145600994BE6 /* ChimpKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChimpKit.m; sourceTree = "<group>"; };
 		3A9A6AAA169B167400994BE6 /* ChimpKitRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChimpKitRequest.h; sourceTree = "<group>"; };
 		3A9A6AAB169B167400994BE6 /* ChimpKitRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChimpKitRequest.m; sourceTree = "<group>"; };
+		3A9A6AAE169B262E00994BE6 /* CKAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKAuthViewController.h; sourceTree = "<group>"; };
+		3A9A6AAF169B262E00994BE6 /* CKAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKAuthViewController.m; sourceTree = "<group>"; };
+		3A9A6AB0169B262E00994BE6 /* CKSubscribeAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKSubscribeAlertView.h; sourceTree = "<group>"; };
+		3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKSubscribeAlertView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +126,7 @@
 		3A9A6A97169B143400994BE6 /* ChimpKit3 */ = {
 			isa = PBXGroup;
 			children = (
+				3A9A6AAD169B262E00994BE6 /* Helper Objects */,
 				3A9A6A99169B145600994BE6 /* ChimpKit.h */,
 				3A9A6A9A169B145600994BE6 /* ChimpKit.m */,
 				3A9A6AAA169B167400994BE6 /* ChimpKitRequest.h */,
@@ -128,6 +135,17 @@
 			name = ChimpKit3;
 			path = ../ChimpKit3;
 			sourceTree = SOURCE_ROOT;
+		};
+		3A9A6AAD169B262E00994BE6 /* Helper Objects */ = {
+			isa = PBXGroup;
+			children = (
+				3A9A6AAE169B262E00994BE6 /* CKAuthViewController.h */,
+				3A9A6AAF169B262E00994BE6 /* CKAuthViewController.m */,
+				3A9A6AB0169B262E00994BE6 /* CKSubscribeAlertView.h */,
+				3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */,
+			);
+			path = "Helper Objects";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -201,6 +219,8 @@
 				3A9A6A8D169B135D00994BE6 /* ViewController.m in Sources */,
 				3A9A6A9B169B145600994BE6 /* ChimpKit.m in Sources */,
 				3A9A6AAC169B167400994BE6 /* ChimpKitRequest.m in Sources */,
+				3A9A6AB2169B262E00994BE6 /* CKAuthViewController.m in Sources */,
+				3A9A6AB3169B262E00994BE6 /* CKSubscribeAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

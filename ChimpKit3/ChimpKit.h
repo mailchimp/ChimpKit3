@@ -10,9 +10,13 @@
 #import "ChimpKitRequest.h"
 
 
+#define kDefaultTimeoutInterval	15.0f
+
+
 @interface ChimpKit : NSObject
 
 @property (nonatomic, strong) NSString *apiKey;
+@property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
 + (ChimpKit *)sharedKit;
 

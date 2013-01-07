@@ -7,23 +7,42 @@
 //
 
 #import "ViewController.h"
+#import "ChimpKit.h"
+#import "CKSubscribeAlertView.h"
 
-@interface ViewController ()
-
-@end
 
 @implementation ViewController
+
+
+#pragma mark - View Lifecycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+	
+	// This call would fetch lists
+    [[ChimpKit sharedKit] callApiMethod:@"lists"
+							 withParams:nil
+				   andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
+					   NSLog(@"Here are my lists: %@", request.responseString);
+				   }];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+#pragma mark - UI Actions
+
+- (IBAction)subscribeButtonTapped:(id)sender {
+	CKSubscribeAlertView *alert = [[CKSubscribeAlertView alloc] initWithTitle:@"Subscribe"
+                                                                  message:@"Enter your email address to subscribe to our mailing list."
+                                                                   listId:@"<YOUR LIST ID>"
+                                                        cancelButtonTitle:@"Cancel"
+                                                     subscribeButtonTitle:@"Subscribe"];
+	
+	[alert show];
+}
+
+- (IBAction)loginButtonTapped:(id)sender {
+	
 }
 
 @end
