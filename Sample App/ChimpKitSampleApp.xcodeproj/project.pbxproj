@@ -19,6 +19,8 @@
 		3A9A6A87169B135D00994BE6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A9A6A85169B135D00994BE6 /* MainStoryboard_iPhone.storyboard */; };
 		3A9A6A8A169B135D00994BE6 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A9A6A88169B135D00994BE6 /* MainStoryboard_iPad.storyboard */; };
 		3A9A6A8D169B135D00994BE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6A8C169B135D00994BE6 /* ViewController.m */; };
+		3A9A6A9B169B145600994BE6 /* ChimpKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6A9A169B145600994BE6 /* ChimpKit.m */; };
+		3A9A6AAC169B167400994BE6 /* ChimpKitRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6AAB169B167400994BE6 /* ChimpKitRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +41,10 @@
 		3A9A6A89169B135D00994BE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		3A9A6A8B169B135D00994BE6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		3A9A6A8C169B135D00994BE6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		3A9A6A99169B145600994BE6 /* ChimpKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChimpKit.h; sourceTree = "<group>"; };
+		3A9A6A9A169B145600994BE6 /* ChimpKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChimpKit.m; sourceTree = "<group>"; };
+		3A9A6AAA169B167400994BE6 /* ChimpKitRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChimpKitRequest.h; sourceTree = "<group>"; };
+		3A9A6AAB169B167400994BE6 /* ChimpKitRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChimpKitRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +64,7 @@
 		3A9A6A5E169B135D00994BE6 = {
 			isa = PBXGroup;
 			children = (
+				3A9A6A97169B143400994BE6 /* ChimpKit3 */,
 				3A9A6A73169B135D00994BE6 /* ChimpKitSampleApp */,
 				3A9A6A6C169B135D00994BE6 /* Frameworks */,
 				3A9A6A6A169B135D00994BE6 /* Products */,
@@ -109,6 +116,18 @@
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
+		};
+		3A9A6A97169B143400994BE6 /* ChimpKit3 */ = {
+			isa = PBXGroup;
+			children = (
+				3A9A6A99169B145600994BE6 /* ChimpKit.h */,
+				3A9A6A9A169B145600994BE6 /* ChimpKit.m */,
+				3A9A6AAA169B167400994BE6 /* ChimpKitRequest.h */,
+				3A9A6AAB169B167400994BE6 /* ChimpKitRequest.m */,
+			);
+			name = ChimpKit3;
+			path = ../ChimpKit3;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -180,6 +199,8 @@
 				3A9A6A7A169B135D00994BE6 /* main.m in Sources */,
 				3A9A6A7E169B135D00994BE6 /* AppDelegate.m in Sources */,
 				3A9A6A8D169B135D00994BE6 /* ViewController.m in Sources */,
+				3A9A6A9B169B145600994BE6 /* ChimpKit.m in Sources */,
+				3A9A6AAC169B167400994BE6 /* ChimpKitRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +327,7 @@
 				3A9A6A92169B135D00994BE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
