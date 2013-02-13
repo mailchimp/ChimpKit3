@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CKAuthViewController.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <CKAuthViewControllerDelegate>
 
 @end

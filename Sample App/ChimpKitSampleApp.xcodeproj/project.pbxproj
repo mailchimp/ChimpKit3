@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A1DB20816CBF08700B5A662 /* CKAuthViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */; };
 		3A9A6A6E169B135D00994BE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A6D169B135D00994BE6 /* UIKit.framework */; };
 		3A9A6A70169B135D00994BE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A6F169B135D00994BE6 /* Foundation.framework */; };
 		3A9A6A72169B135D00994BE6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A71169B135D00994BE6 /* CoreGraphics.framework */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CKAuthViewController.xib; sourceTree = "<group>"; };
 		3A9A6A69169B135D00994BE6 /* ChimpKitSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChimpKitSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9A6A6D169B135D00994BE6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3A9A6A6F169B135D00994BE6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -141,6 +143,7 @@
 			children = (
 				3A9A6AAE169B262E00994BE6 /* CKAuthViewController.h */,
 				3A9A6AAF169B262E00994BE6 /* CKAuthViewController.m */,
+				3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */,
 				3A9A6AB0169B262E00994BE6 /* CKSubscribeAlertView.h */,
 				3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */,
 			);
@@ -204,6 +207,7 @@
 				3A9A6A84169B135D00994BE6 /* Default-568h@2x.png in Resources */,
 				3A9A6A87169B135D00994BE6 /* MainStoryboard_iPhone.storyboard in Resources */,
 				3A9A6A8A169B135D00994BE6 /* MainStoryboard_iPad.storyboard in Resources */,
+				3A1DB20816CBF08700B5A662 /* CKAuthViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

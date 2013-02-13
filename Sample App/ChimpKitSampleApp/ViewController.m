@@ -42,7 +42,30 @@
 }
 
 - (IBAction)loginButtonTapped:(id)sender {
+	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"<YOUR CLIENT ID>"
+																			  andClientSecret:@"<YOUR CLIENT SECRET>"];
 	
+    authViewController.delegate = self;
+	
+	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:authViewController];
+	
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
+
+
+#pragma mark - <CKAuthViewControllerDelegate> Methods
+
+- (void)ckAuthUserCanceled {
+	[self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey {
+	[self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)ckAuthFailedWithError:(NSError *)error {
+	[self dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 @end
