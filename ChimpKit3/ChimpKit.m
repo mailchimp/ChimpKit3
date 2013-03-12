@@ -54,13 +54,13 @@
 #pragma mark - API Methods
 
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
-	NSAssert(aHandler != nil, @"Please provide a Completion Handler before when calling an API Method");
+	NSAssert(aHandler != nil, @"Please provide a Completion Handler before calling an API Method");
 
 	[self callApiMethod:aMethod withParams:someParams andCompletionHandler:aHandler orDelegate:nil];
 }
 
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
-	NSAssert(aDelegate != nil, @"Please provide a Delegate before when calling an API Method");
+	NSAssert(aDelegate != nil, @"Please provide a Delegate before calling an API Method");
 
 	[self callApiMethod:aMethod withParams:someParams andCompletionHandler:nil orDelegate:aDelegate];
 }
