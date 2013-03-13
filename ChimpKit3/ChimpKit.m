@@ -8,16 +8,7 @@
 
 #import "ChimpKit.h"
 
-
-@interface ChimpKit ()
-
-@property (nonatomic, strong) NSString *apiURL;
-
-@end
-
-
 @implementation ChimpKit
-
 
 #pragma mark - Class Methods
 
@@ -43,7 +34,7 @@
 		// Parse out the datacenter and template it into the URL.
 		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
-			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/1.3/?method=", [apiKeyParts objectAtIndex:1]];
+			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/1.3/", [apiKeyParts objectAtIndex:1]];
 		} else {
 			NSAssert(FALSE, @"Please provide a valid API Key");
 		}
@@ -55,20 +46,20 @@
 
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
 	NSAssert(aHandler != nil, @"Please provide a Completion Handler before calling an API Method");
-
+    
 	[self callApiMethod:aMethod withParams:someParams andCompletionHandler:aHandler orDelegate:nil];
 }
 
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	NSAssert(aDelegate != nil, @"Please provide a Delegate before calling an API Method");
-
+    
 	[self callApiMethod:aMethod withParams:someParams andCompletionHandler:nil orDelegate:aDelegate];
 }
 
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	NSAssert(self.apiKey != nil, @"Please set your API Key before calling API Methods");
 	
-	NSString *urlString = [NSString stringWithFormat:@"%@%@", self.apiURL, aMethod];
+	NSString *urlString = [NSString stringWithFormat:@"%@?method=%@", self.apiURL, aMethod];
 	
 	ChimpKitRequest *request = [ChimpKitRequest requestWithURL:[NSURL URLWithString:urlString]];
 	

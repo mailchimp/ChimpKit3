@@ -16,6 +16,7 @@
 @interface ChimpKit : NSObject
 
 @property (nonatomic, strong) NSString *apiKey;
+@property (nonatomic, strong) NSString *apiURL;
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
 + (ChimpKit *)sharedKit;
