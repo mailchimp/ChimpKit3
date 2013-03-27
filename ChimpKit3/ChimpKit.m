@@ -43,28 +43,42 @@
 
 
 #pragma mark - API Methods
-
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+    [self callApiMethod:aMethod withApiKey:nil params:someParams andCompletionHandler:aHandler];
+}
+
+- (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
 	NSAssert(aHandler != nil, @"Please provide a Completion Handler before calling an API Method");
     
-	[self callApiMethod:aMethod withParams:someParams andCompletionHandler:aHandler orDelegate:nil];
+	[self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:aHandler orDelegate:nil];
 }
 
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
-	NSAssert(aDelegate != nil, @"Please provide a Delegate before calling an API Method");
-    
-	[self callApiMethod:aMethod withParams:someParams andCompletionHandler:nil orDelegate:aDelegate];
+    [self callApiMethod:aMethod withApiKey:nil params:someParams andDelegate:aDelegate];
 }
 
-- (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
-	NSAssert(self.apiKey != nil, @"Please set your API Key before calling API Methods");
+- (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+	NSAssert(aDelegate != nil, @"Please provide a Delegate before calling an API Method");
+    
+	[self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:nil orDelegate:aDelegate];
+}
+
+- (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+	NSAssert((anApiKey != nil) || (self.apiKey != nil), @"Please set an API Key before calling API Methods");
 	
 	NSString *urlString = [NSString stringWithFormat:@"%@?method=%@", self.apiURL, aMethod];
 	
+    //Encode params sets the apikey after 
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
+    if (anApiKey != nil) {
+        [params setValue:anApiKey forKey:@"apikey"];
+    } else if (self.apiKey) {
+        [params setValue:self.apiKey forKey:@"apikey"];
+    }
+    
 	ChimpKitRequest *request = [ChimpKitRequest requestWithURL:[NSURL URLWithString:urlString]];
-	
 	[request setHttpMethod:@"POST"];
-	[request setHttpBody:[self encodeRequestParams:someParams]];
+	[request setHttpBody:[self encodeRequestParams:params]];
 	
 	if (aHandler) {
 		[request startImmediatelyWithCompletionHandler:aHandler];
@@ -79,17 +93,7 @@
 #pragma mark - Private Methods
 
 - (NSMutableData *)encodeRequestParams:(NSDictionary *)params {
-    NSMutableDictionary *postBodyParams = [NSMutableDictionary dictionary];
-	
-    if (self.apiKey) {
-        [postBodyParams setValue:self.apiKey forKey:@"apikey"];
-    }
-	
-    if (params) {
-        [postBodyParams setValuesForKeysWithDictionary:params];
-    }
-	
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:postBodyParams options:0 error:nil];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     
     NSString *encodedParamsAsJson = [self encodeString:jsonString];
