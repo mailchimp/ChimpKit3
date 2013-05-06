@@ -32,19 +32,17 @@
 	// This call fetches subscribers via the export API
 	[[ChimpKit sharedKit] callExportApiMethod:@"list"
 								   withParams:@{@"id": @"<YOUR LIST ID>"}
-						  dataReceivedHandler:^(ChimpKitExportRequest *request, NSData *data, BOOL *shouldCancelRequest) {
-							  NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+						  dataReceivedHandler:^(ChimpKitExportRequest *request, NSString *data, BOOL *shouldCancelRequest) {
+							  NSLog(@"Here is a line of data: %@", data);
 							  
-							  NSLog(@"Here is a chunk of data: %@", stringData);
-							  
-							  // Cancel request after 10 chunks of data, could do something more interesting here (or not cancel at all)
-							  if (count >= 10) {
-								  shouldCancelRequest = YES;
+							  // Cancel request after 1000 lines of data, could do something more interesting here (or not cancel at all)
+							  if (count >= 1000) {
+								  *shouldCancelRequest = YES;
 							  }
 							  
 							  count++;
 						  } andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
-							  // Request is done!
+							  // Request is done! (assuming you didn't cancel before)
 						  }];
 }
 

@@ -12,13 +12,13 @@
 @class ChimpKitExportRequest;
 
 
-typedef void (^ChimpKitExportRequestDataReceivedBlock)(ChimpKitExportRequest *request, NSData *data, BOOL *shouldCancelRequest);
+typedef void (^ChimpKitExportRequestDataReceivedBlock)(ChimpKitExportRequest *request, NSString *data, BOOL *shouldCancelRequest);
 
 
 @protocol ChimpKitExportRequestDelegate <ChimpKitRequestDelegate>
 
 @optional
-- (void)ckExportRequest:(ChimpKitExportRequest *)aRequest didReceiveData:(NSData *)data;
+- (void)ckExportRequest:(ChimpKitExportRequest *)aRequest didReceiveData:(NSString *)data;
 - (BOOL)ckShouldCancelExportRequest:(ChimpKitExportRequest *)aReqeust;
 
 @end

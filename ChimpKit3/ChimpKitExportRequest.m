@@ -13,6 +13,7 @@
 
 @property (nonatomic, copy) ChimpKitRequestCompletionBlock completionHandler;
 @property (nonatomic, copy) ChimpKitExportRequestDataReceivedBlock dataReceivedHandler;
+@property (nonatomic, strong) NSString *lastPartialLine;
 
 @end
 
@@ -39,6 +40,48 @@
 
 #pragma mark - Private Methods
 
+- (void)parseReceivedData:(NSData *)data {
+	NSString *stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	
+	if (self.lastPartialLine) {
+		stringData = [self.lastPartialLine stringByAppendingString:stringData];
+	}
+	
+	NSArray *lines = [stringData componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+	
+	for (NSString *line in lines) {
+		NSUInteger index = [lines indexOfObject:line];
+		if (index == (lines.count - 1)) {
+			self.lastPartialLine = line;
+			break;
+		}
+		
+		if ((self.delegate) && [self.delegate respondsToSelector:@selector(ckExportRequest:didReceiveData:)]) {
+			[self.delegate ckExportRequest:self didReceiveData:line];
+		}
+		
+		if (self.dataReceivedHandler) {
+			BOOL shouldCancelRequest = NO;
+			
+			self.dataReceivedHandler(self, line, &shouldCancelRequest);
+			
+			if (shouldCancelRequest) {
+				[self cancel];
+				
+				break;
+			}
+		}
+		
+		if ((self.delegate) && [self.delegate respondsToSelector:@selector(ckShouldCancelExportRequest:)]) {
+			if ([self.delegate ckShouldCancelExportRequest:self]) {
+				[self cancel];
+				
+				break;
+			}
+		}
+	}
+}
+
 - (void)finish {
 	self.dataReceivedHandler = nil;
 	
@@ -60,25 +103,7 @@
 #pragma mark - <NSURLConnectionDelegate> Methods
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	if ((self.delegate) && [self.delegate respondsToSelector:@selector(ckExportRequest:didReceiveData:)]) {
-		[self.delegate ckExportRequest:self didReceiveData:data];
-	}
-	
-	[self.responseData appendData:data];
-	
-	if (self.dataReceivedHandler) {
-		BOOL shouldCancelRequest = NO;
-		
-		self.dataReceivedHandler(self, data, &shouldCancelRequest);
-		
-		if (shouldCancelRequest) {
-			[self cancel];
-		}
-	} else if ((self.delegate) && [self.delegate respondsToSelector:@selector(ckShouldCancelExportRequest:)]) {
-		if ([self.delegate ckShouldCancelExportRequest:self]) {
-			[self cancel];
-		}
-	}
+	[self parseReceivedData:data];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
