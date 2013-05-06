@@ -12,7 +12,7 @@
 @class ChimpKitRequest;
 
 
-typedef void (^ChimpKitRequestCompletionBlock)(ChimpKitRequest *, NSError *);
+typedef void (^ChimpKitRequestCompletionBlock)(ChimpKitRequest *request, NSError *error);
 
 
 @protocol ChimpKitRequestDelegate <NSObject>
@@ -64,5 +64,12 @@ typedef void (^ChimpKitRequestCompletionBlock)(ChimpKitRequest *, NSError *);
 @property (nonatomic, strong) NSMutableData *responseData;
 @property (nonatomic, strong) NSString *responseString;
 
+
+@end
+
+
+@interface ChimpKitRequest (SubclassingHooks)
+
+- (void)finish;
 
 @end

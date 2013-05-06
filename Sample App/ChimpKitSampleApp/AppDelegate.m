@@ -11,8 +11,7 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// Set your API Key here
 	[[ChimpKit sharedKit] setApiKey:@"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-XXX"];
 	

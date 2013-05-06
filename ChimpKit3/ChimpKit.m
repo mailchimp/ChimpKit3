@@ -35,6 +35,7 @@
 		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
 			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/1.3/", [apiKeyParts objectAtIndex:1]];
+			self.exportApiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/export/1.0/", [apiKeyParts objectAtIndex:1]];
 		} else {
 			NSAssert(FALSE, @"Please provide a valid API Key");
 		}
@@ -82,6 +83,46 @@
 	
 	if (aHandler) {
 		[request startImmediatelyWithCompletionHandler:aHandler];
+	} else {
+		[request setDelegate:aDelegate];
+		
+		[request startImmediately];
+	}
+}
+
+- (void)callExportApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams dataReceivedHandler:(ChimpKitExportRequestDataReceivedBlock)aDataReceivedHandler andCompletionHandler:(ChimpKitRequestCompletionBlock)aCompletionHandler {
+	NSAssert(aCompletionHandler != nil, @"Please provide a Completion Handler before calling an API Method");
+    
+	[self callExportApiMethod:aMethod withApiKey:nil params:someParams dataReceivedHandler:aDataReceivedHandler andCompletionHandler:aCompletionHandler orDelegate:nil];
+}
+
+- (void)callExportApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitExportRequestDelegate>)aDelegate {
+	NSAssert(aDelegate != nil, @"Please provide a Delegate before calling an API Method");
+    
+	[self callExportApiMethod:aMethod withApiKey:nil params:someParams dataReceivedHandler:nil andCompletionHandler:nil orDelegate:aDelegate];
+}
+
+- (void)callExportApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams dataReceivedHandler:(ChimpKitExportRequestDataReceivedBlock)aDataReceivedHandler andCompletionHandler:(ChimpKitRequestCompletionBlock)aCompletionHandler orDelegate:(id<ChimpKitExportRequestDelegate>)aDelegate {
+	NSAssert((anApiKey != nil) || (self.apiKey != nil), @"Please set an API Key before calling API Methods");
+	
+	NSString *urlString = [NSString stringWithFormat:@"%@%@/", self.exportApiURL, aMethod];
+	
+    //Encode params sets the apikey after
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
+    if (anApiKey != nil) {
+        [params setValue:anApiKey forKey:@"apikey"];
+    } else if (self.apiKey) {
+        [params setValue:self.apiKey forKey:@"apikey"];
+    }
+	
+	ChimpKitExportRequest *request = [ChimpKitExportRequest requestWithURL:[NSURL URLWithString:urlString]];
+	[request setHttpMethod:@"POST"];
+	[request setHttpBody:[self encodeRequestParams:params]];
+	
+	if (aDataReceivedHandler && aCompletionHandler) {
+		[request startImmediatelyWithDataReceivedHandler:aDataReceivedHandler andCompletionHandler:aCompletionHandler];
+	} else if (aCompletionHandler) {
+		[request startImmediatelyWithCompletionHandler:aCompletionHandler];
 	} else {
 		[request setDelegate:aDelegate];
 		

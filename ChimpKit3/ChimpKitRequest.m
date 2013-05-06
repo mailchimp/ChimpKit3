@@ -18,11 +18,6 @@
 @property (nonatomic, assign) BOOL finished;
 @property (nonatomic, copy) ChimpKitRequestCompletionBlock completionHandler;
 
-+ (NSOperationQueue *)connectionQueue;
-- (NSOperationQueue *)backgroundQueue;
-- (NSURLRequest *)createRequest;
-- (void)finish;
-
 @end
 
 
@@ -61,7 +56,7 @@
 #pragma mark - Constructor
 
 + (id)requestWithURL:(NSURL *)aURL {
-	return [[ChimpKitRequest alloc] initWithURL:aURL];
+	return [[self alloc] initWithURL:aURL];
 }
 
 
@@ -143,7 +138,7 @@
 	}
 	
 	[NSURLConnection sendAsynchronousRequest:request
-									   queue:queue
+									   queue:queue 
 						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 							   self.response = (NSHTTPURLResponse *)response;
 							   [self.responseData appendData:data];
