@@ -97,15 +97,20 @@
 	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
 	
 	if (anApiKey) {
-		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
+		NSArray *apiKeyParts = [anApiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
 			NSString *apiURL = [NSString stringWithFormat:kAPI20Endpoint, [apiKeyParts objectAtIndex:1]];
 			urlString = [NSString stringWithFormat:@"%@%@", apiURL, aMethod];
 		} else {
+            NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
+
 			if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
-				NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
 				[self.delegate methodCall:aMethod failedWithError:error];
 			}
+            
+            if (aHandler) {
+                aHandler(nil, error);
+            }
 			
 			return;
 		}
