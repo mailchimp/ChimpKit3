@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3A1DB20816CBF08700B5A662 /* CKAuthViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */; };
-		3A23A3A91734016B009D69EB /* ChimpKitExportRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A23A3A81734016B009D69EB /* ChimpKitExportRequest.m */; };
 		3A9A6A6E169B135D00994BE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A6D169B135D00994BE6 /* UIKit.framework */; };
 		3A9A6A70169B135D00994BE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A6F169B135D00994BE6 /* Foundation.framework */; };
 		3A9A6A72169B135D00994BE6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A71169B135D00994BE6 /* CoreGraphics.framework */; };
@@ -29,8 +28,6 @@
 
 /* Begin PBXFileReference section */
 		3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CKAuthViewController.xib; sourceTree = "<group>"; };
-		3A23A3A71734016B009D69EB /* ChimpKitExportRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChimpKitExportRequest.h; sourceTree = "<group>"; };
-		3A23A3A81734016B009D69EB /* ChimpKitExportRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChimpKitExportRequest.m; sourceTree = "<group>"; };
 		3A9A6A69169B135D00994BE6 /* ChimpKitSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChimpKitSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9A6A6D169B135D00994BE6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3A9A6A6F169B135D00994BE6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -136,8 +133,6 @@
 				3A9A6A9A169B145600994BE6 /* ChimpKit.m */,
 				3A9A6AAA169B167400994BE6 /* ChimpKitRequest.h */,
 				3A9A6AAB169B167400994BE6 /* ChimpKitRequest.m */,
-				3A23A3A71734016B009D69EB /* ChimpKitExportRequest.h */,
-				3A23A3A81734016B009D69EB /* ChimpKitExportRequest.m */,
 			);
 			name = ChimpKit3;
 			path = ../ChimpKit3;
@@ -230,7 +225,6 @@
 				3A9A6AAC169B167400994BE6 /* ChimpKitRequest.m in Sources */,
 				3A9A6AB2169B262E00994BE6 /* CKAuthViewController.m in Sources */,
 				3A9A6AB3169B262E00994BE6 /* CKSubscribeAlertView.m in Sources */,
-				3A23A3A91734016B009D69EB /* ChimpKitExportRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

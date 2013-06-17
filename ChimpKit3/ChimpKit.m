@@ -8,6 +8,11 @@
 
 #import "ChimpKit.h"
 
+
+#define kAPI20Endpoint	@"https://%@.api.mailchimp.com/api/2.0/"
+#define kErrorDomain	@"com.MailChimp.ChimpKit.ErrorDomain"
+
+
 @implementation ChimpKit
 
 #pragma mark - Class Methods
@@ -34,8 +39,7 @@
 		// Parse out the datacenter and template it into the URL.
 		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
-			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/2.0/", [apiKeyParts objectAtIndex:1]];
-			self.exportApiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/export/1.0/", [apiKeyParts objectAtIndex:1]];
+			self.apiURL = [NSString stringWithFormat:kAPI20Endpoint, [apiKeyParts objectAtIndex:1]];
 		} else {
 			NSAssert(FALSE, @"Please provide a valid API Key");
 		}
@@ -44,13 +48,17 @@
 
 
 #pragma mark - API Methods
+
 - (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
     [self callApiMethod:aMethod withApiKey:nil params:someParams andCompletionHandler:aHandler];
 }
 
 - (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
 	if (aHandler == nil) {
-		NSLog(@"Please provide a Completion Handler before calling an API Method");
+		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
+			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidCompletionHandler userInfo:nil];
+			[self.delegate methodCall:aMethod failedWithError:error];
+		}
 		
 		return;
 	}
@@ -64,7 +72,10 @@
 
 - (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if (aDelegate == nil) {
-		NSLog(@"Please provide a Delegate before calling an API Method");
+		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
+			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidDelegate userInfo:nil];
+			[self.delegate methodCall:aMethod failedWithError:error];
+		}
 		
 		return;
 	}
@@ -74,23 +85,39 @@
 
 - (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if ((anApiKey == nil) && (self.apiKey == nil)) {
-		NSLog(@"Please set an API Key before calling API Methods");
+		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
+			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
+			[self.delegate methodCall:aMethod failedWithError:error];
+		}
 		
 		return;
 	}
 	
-	NSString *urlString = [NSString stringWithFormat:@"%@%@", self.apiURL, aMethod];
+	NSString *urlString = nil;
+	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
 	
-	NSLog(@"URL: %@", urlString);
+	if (anApiKey) {
+		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
+		if ([apiKeyParts count] > 1) {
+			NSString *apiURL = [NSString stringWithFormat:kAPI20Endpoint, [apiKeyParts objectAtIndex:1]];
+			urlString = [NSString stringWithFormat:@"%@%@", apiURL, aMethod];
+		} else {
+			if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
+				NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
+				[self.delegate methodCall:aMethod failedWithError:error];
+			}
+			
+			return;
+		}
+		
+		[params setValue:anApiKey forKey:@"apikey"];
+	} else if (self.apiKey) {
+		urlString = [NSString stringWithFormat:@"%@%@", self.apiURL, aMethod];
+		[params setValue:self.apiKey forKey:@"apikey"];
+	}
 	
-    //Encode params sets the apikey after 
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
-    if (anApiKey) {
-        [params setValue:anApiKey forKey:@"apikey"];
-    } else if (self.apiKey) {
-        [params setValue:self.apiKey forKey:@"apikey"];
-    }
-    
+	if (kCKDebug) NSLog(@"URL: %@", urlString);
+	    
 	ChimpKitRequest *request = [ChimpKitRequest requestWithURL:[NSURL URLWithString:urlString]];
 	[request setHttpMethod:@"POST"];
 	[request setHttpBody:[self encodeRequestParams:params]];

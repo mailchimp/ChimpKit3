@@ -97,7 +97,7 @@ subscribeButtonTitle:(NSString *)subscribeButtonTitle
         [params setValue:(self.doubleOptIn ? @"true" : @"false") forKey:@"double_optin"];
 		[params setValue:@"true" forKey:@"update_existing"];
 		
-		[[ChimpKit sharedKit] callApiMethod:@"listSubscribe"
+		[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe"
 								 withParams:params
 					   andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
 						   NSLog(@"Response: %@", request.responseString);

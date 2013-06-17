@@ -10,14 +10,31 @@
 #import "ChimpKitRequest.h"
 
 
-#define kDefaultTimeoutInterval	15.0f
+#define kCKDebug					0
+#define kDefaultTimeoutInterval		15.0f
+
+
+typedef enum {
+	kChimpKitErrorInvalidAPIKey = 0,
+	kChimpKitErrorInvalidDelegate,
+	kChimpKitErrorInvalidCompletionHandler
+} ChimpKitError;
+
+
+@protocol ChimpKitDelegate <NSObject>
+
+@optional
+- (void)methodCall:(NSString *)aMethod failedWithError:(NSError *)anError;
+
+@end
 
 
 @interface ChimpKit : NSObject
 
+@property (nonatomic, strong) id<ChimpKitDelegate> delegate;
+
 @property (nonatomic, strong) NSString *apiKey;
 @property (nonatomic, strong) NSString *apiURL;
-@property (nonatomic, strong) NSString *exportApiURL;
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
 + (ChimpKit *)sharedKit;
