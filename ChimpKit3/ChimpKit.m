@@ -9,7 +9,7 @@
 #import "ChimpKit.h"
 
 
-#define kAPI20Endpoint	@"https://%@.api.mailchimp.com/api/2.0/"
+#define kAPI20Endpoint	@"https://%@.api.mailchimp.com/2.0/"
 #define kErrorDomain	@"com.MailChimp.ChimpKit.ErrorDomain"
 
 
