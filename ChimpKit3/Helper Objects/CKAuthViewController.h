@@ -21,7 +21,7 @@
 
 // You must dismiss the Auth View in all of these methods
 - (void)ckAuthUserCanceled;
-- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey;
+- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey accountName:(NSString *)accountName andRole:(NSString *)role;
 - (void)ckAuthFailedWithError:(NSError *)error;
 
 @end

@@ -77,7 +77,7 @@
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey {
+- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey accountName:(NSString *)accountName andRole:(NSString *)role {
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 

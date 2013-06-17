@@ -34,7 +34,7 @@
 		// Parse out the datacenter and template it into the URL.
 		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
-			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/1.3/", [apiKeyParts objectAtIndex:1]];
+			self.apiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/2.0/", [apiKeyParts objectAtIndex:1]];
 			self.exportApiURL = [NSString stringWithFormat:@"https://%@.api.mailchimp.com/export/1.0/", [apiKeyParts objectAtIndex:1]];
 		} else {
 			NSAssert(FALSE, @"Please provide a valid API Key");
@@ -49,7 +49,11 @@
 }
 
 - (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
-	NSAssert(aHandler != nil, @"Please provide a Completion Handler before calling an API Method");
+	if (aHandler == nil) {
+		NSLog(@"Please provide a Completion Handler before calling an API Method");
+		
+		return;
+	}
     
 	[self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:aHandler orDelegate:nil];
 }
@@ -59,19 +63,27 @@
 }
 
 - (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
-	NSAssert(aDelegate != nil, @"Please provide a Delegate before calling an API Method");
+	if (aDelegate == nil) {
+		NSLog(@"Please provide a Delegate before calling an API Method");
+		
+		return;
+	}
     
 	[self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:nil orDelegate:aDelegate];
 }
 
 - (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
-	NSAssert((anApiKey != nil) || (self.apiKey != nil), @"Please set an API Key before calling API Methods");
+	if ((anApiKey == nil) && (self.apiKey == nil)) {
+		NSLog(@"Please set an API Key before calling API Methods");
+		
+		return;
+	}
 	
 	NSString *urlString = [NSString stringWithFormat:@"%@?method=%@", self.apiURL, aMethod];
 	
     //Encode params sets the apikey after 
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
-    if (anApiKey != nil) {
+    if (anApiKey) {
         [params setValue:anApiKey forKey:@"apikey"];
     } else if (self.apiKey) {
         [params setValue:self.apiKey forKey:@"apikey"];
@@ -137,19 +149,10 @@
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     
-    NSString *encodedParamsAsJson = [self encodeString:jsonString];
-    NSMutableData *postData = [NSMutableData dataWithData:[encodedParamsAsJson dataUsingEncoding:NSUTF8StringEncoding]];
+    NSMutableData *postData = [NSMutableData dataWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]];
 	
     return postData;
 }
 
-- (NSString *)encodeString:(NSString *)unencodedString {
-    NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
-																									(__bridge CFStringRef)unencodedString,
-																									NULL,
-																									(CFStringRef)@"!*'();:@&=+$,/?%#[]",
-																									kCFStringEncodingUTF8));
-    return encodedString;
-}
 
 @end

@@ -195,7 +195,12 @@
         //to form the MailChimp API key and notify our delegate
         NSString *dataCenter = [jsonValue objectForKey:@"dc"];
         NSString *apiKey = [NSString stringWithFormat:@"%@-%@", self.accessToken, dataCenter];
-        [self.delegate ckAuthSucceededWithApiKey:apiKey];
+        NSString *accountName = [jsonValue objectForKey:@"accountname"];
+		NSString *role = [jsonValue objectForKey:@"role"];
+
+		if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:accountName:andRole:)]) {
+			[self.delegate ckAuthSucceededWithApiKey:apiKey accountName:accountName andRole:role];
+		}
 
         [self cleanup];
     }
@@ -204,7 +209,10 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     [self.spinner setHidden:YES];
 
-    [self.delegate ckAuthFailedWithError:error];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
+		[self.delegate ckAuthFailedWithError:error];
+	}
+	
     [self cleanup];
 }
 
