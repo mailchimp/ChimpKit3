@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "ChimpKitRequest.h"
-#import "ChimpKitExportRequest.h"
 
 
 #define kDefaultTimeoutInterval	15.0f
@@ -30,15 +29,6 @@
 - (void)callApiMethod:(NSString *)aMethod
 		   withParams:(NSDictionary *)someParams
 		  andDelegate:(id<ChimpKitRequestDelegate>)aDelegate;
-
-- (void)callExportApiMethod:(NSString *)aMethod
-				 withParams:(NSDictionary *)someParams
-		dataReceivedHandler:(ChimpKitExportRequestDataReceivedBlock)aDataReceivedHandler
-	   andCompletionHandler:(ChimpKitRequestCompletionBlock)aCompletionHandler;
-
-- (void)callExportApiMethod:(NSString *)aMethod
-				 withParams:(NSDictionary *)someParams
-				andDelegate:(id<ChimpKitExportRequestDelegate>)aDelegate;
 
 // If these methods are called with a nil apikey, ChimpKit falls back to
 // using the global apikey
