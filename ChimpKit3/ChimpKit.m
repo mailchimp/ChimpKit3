@@ -126,6 +126,7 @@
 	ChimpKitRequest *request = [ChimpKitRequest requestWithURL:[NSURL URLWithString:urlString]];
 	[request setHttpMethod:@"POST"];
 	[request setHttpBody:[self encodeRequestParams:params]];
+	[request setShouldUseBackgroundThread:self.shouldUseBackgroundThread];
 	
 	if (aHandler) {
 		[request startImmediatelyWithCompletionHandler:aHandler];
