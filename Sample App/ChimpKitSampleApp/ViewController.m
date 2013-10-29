@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "ChimpKit.h"
 #import "CKSubscribeAlertView.h"
+#import "CKScanViewController.h"
 
 
 @implementation ViewController
@@ -49,6 +50,30 @@
 	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:authViewController];
 	
     [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (IBAction)scanBarcodeButtonTapped:(id)sender {
+	CKScanViewController *scanViewController = [[CKScanViewController alloc] init];
+	
+	[scanViewController setApiKeyFound:^(NSString *apiKey) {
+		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+															message:[NSString stringWithFormat:@"API Key: %@", apiKey]
+														   delegate:nil
+												  cancelButtonTitle:@"OK"
+												  otherButtonTitles:nil];
+		
+		[self dismissViewControllerAnimated:YES completion:^{
+			[alertView show];
+		}];
+	}];
+	
+	[scanViewController setUserCancelled:^{
+		[self dismissViewControllerAnimated:YES completion:nil];
+	}];
+	
+	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:scanViewController];
+	
+	[self presentViewController:navigationController animated:YES completion:nil];
 }
 
 

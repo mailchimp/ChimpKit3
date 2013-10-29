@@ -46,4 +46,8 @@
 - (id)initWithClientId:(NSString *)cId andClientSecret:(NSString *)cSecret;
 - (id)initWithClientId:(NSString *)cId clientSecret:(NSString *)cSecret andRedirectUrl:(NSString *)rdirectUrl;
 
+@property (nonatomic, copy) void (^authSucceeded)(NSString *apiKey, NSString *accountName, NSString *role);
+@property (nonatomic, copy) void (^authFailed)(NSError *error);
+@property (nonatomic, copy) void (^userCancelled)(void);
+
 @end

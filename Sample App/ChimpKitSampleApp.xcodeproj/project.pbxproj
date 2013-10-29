@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3A1DB20816CBF08700B5A662 /* CKAuthViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */; };
+		3A3AFC16181FFC6300A0FD55 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A3AFC15181FFC6300A0FD55 /* AVFoundation.framework */; };
+		3A3AFC1918200CBA00A0FD55 /* CKScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3AFC1818200CBA00A0FD55 /* CKScanViewController.m */; };
 		3A9A6A6E169B135D00994BE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A6D169B135D00994BE6 /* UIKit.framework */; };
 		3A9A6A70169B135D00994BE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A6F169B135D00994BE6 /* Foundation.framework */; };
 		3A9A6A72169B135D00994BE6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9A6A71169B135D00994BE6 /* CoreGraphics.framework */; };
@@ -28,6 +30,9 @@
 
 /* Begin PBXFileReference section */
 		3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CKAuthViewController.xib; sourceTree = "<group>"; };
+		3A3AFC15181FFC6300A0FD55 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		3A3AFC1718200CBA00A0FD55 /* CKScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKScanViewController.h; sourceTree = "<group>"; };
+		3A3AFC1818200CBA00A0FD55 /* CKScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKScanViewController.m; sourceTree = "<group>"; };
 		3A9A6A69169B135D00994BE6 /* ChimpKitSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChimpKitSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A9A6A6D169B135D00994BE6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3A9A6A6F169B135D00994BE6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -60,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A3AFC16181FFC6300A0FD55 /* AVFoundation.framework in Frameworks */,
 				3A9A6A6E169B135D00994BE6 /* UIKit.framework in Frameworks */,
 				3A9A6A70169B135D00994BE6 /* Foundation.framework in Frameworks */,
 				3A9A6A72169B135D00994BE6 /* CoreGraphics.framework in Frameworks */,
@@ -90,6 +96,7 @@
 		3A9A6A6C169B135D00994BE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3A3AFC15181FFC6300A0FD55 /* AVFoundation.framework */,
 				3A9A6A6D169B135D00994BE6 /* UIKit.framework */,
 				3A9A6A6F169B135D00994BE6 /* Foundation.framework */,
 				3A9A6A71169B135D00994BE6 /* CoreGraphics.framework */,
@@ -146,6 +153,8 @@
 				3A1DB20716CBF08700B5A662 /* CKAuthViewController.xib */,
 				3A9A6AB0169B262E00994BE6 /* CKSubscribeAlertView.h */,
 				3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */,
+				3A3AFC1718200CBA00A0FD55 /* CKScanViewController.h */,
+				3A3AFC1818200CBA00A0FD55 /* CKScanViewController.m */,
 			);
 			path = "Helper Objects";
 			sourceTree = "<group>";
@@ -221,6 +230,7 @@
 				3A9A6A7A169B135D00994BE6 /* main.m in Sources */,
 				3A9A6A7E169B135D00994BE6 /* AppDelegate.m in Sources */,
 				3A9A6A8D169B135D00994BE6 /* ViewController.m in Sources */,
+				3A3AFC1918200CBA00A0FD55 /* CKScanViewController.m in Sources */,
 				3A9A6A9B169B145600994BE6 /* ChimpKit.m in Sources */,
 				3A9A6AAC169B167400994BE6 /* ChimpKitRequest.m in Sources */,
 				3A9A6AB2169B262E00994BE6 /* CKAuthViewController.m in Sources */,
