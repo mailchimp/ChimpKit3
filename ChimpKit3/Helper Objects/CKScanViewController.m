@@ -13,6 +13,7 @@
 @interface CKScanViewController () <AVCaptureMetadataOutputObjectsDelegate>
 
 @property (nonatomic, strong) AVCaptureSession *captureSession;
+@property (nonatomic, strong) AVCaptureMetadataOutput *metadataOutput;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
 
 @end
@@ -43,10 +44,10 @@
 			NSLog(@"Video Capture Error: %@", error);
 		}
 		
-		AVCaptureMetadataOutput *metadataOutput = [[AVCaptureMetadataOutput alloc] init];
-		[self.captureSession addOutput:metadataOutput];
-		[metadataOutput setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-		[metadataOutput setMetadataObjectTypes:@[AVMetadataObjectTypeQRCode]];
+		self.metadataOutput = [[AVCaptureMetadataOutput alloc] init];
+		[self.captureSession addOutput:self.metadataOutput];
+		[self.metadataOutput setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
+		[self.metadataOutput setMetadataObjectTypes:@[AVMetadataObjectTypeQRCode]];
 		
 		self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession];
 		self.previewLayer.frame = self.view.layer.bounds;
@@ -55,9 +56,31 @@
 		[self.captureSession startRunning];
 	}
 	
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-																						  target:self
-																						  action:@selector(cancelButtonTapped:)];
+	if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
+		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+																							  target:self
+																							  action:@selector(cancelButtonTapped:)];
+	}
+}
+
+- (void)dealloc {
+	[self.previewLayer removeFromSuperlayer];
+	self.previewLayer = nil;
+	
+	[self.captureSession stopRunning];
+	self.captureSession = nil;
+}
+
+
+#pragma mark - Public Methods
+
+- (void)restartScanning {
+	if (self.metadataOutput == nil) {
+		self.metadataOutput = [[AVCaptureMetadataOutput alloc] init];
+		[self.captureSession addOutput:self.metadataOutput];
+		[self.metadataOutput setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
+		[self.metadataOutput setMetadataObjectTypes:@[AVMetadataObjectTypeQRCode]];
+	}
 }
 
 
@@ -76,14 +99,11 @@
     for(AVMetadataObject *metadataObject in metadataObjects) {
         AVMetadataMachineReadableCodeObject *readableObject = (AVMetadataMachineReadableCodeObject *)metadataObject;
         if ([metadataObject.type isEqualToString:AVMetadataObjectTypeQRCode]) {
-			[self.previewLayer removeFromSuperlayer];
-			self.previewLayer = nil;
-			
-			[self.captureSession stopRunning];
-			self.captureSession = nil;
-			
 			if (self.apiKeyFound) {
 				self.apiKeyFound(readableObject.stringValue);
+				
+				[self.captureSession removeOutput:self.metadataOutput];
+				self.metadataOutput = nil;
 			}
         }
     }

@@ -7,6 +7,8 @@
 //
 
 #import "CKAuthViewController.h"
+#import "CKScanViewController.h"
+#import "ChimpKit.h"
 
 
 @interface CKAuthViewController()
@@ -49,8 +51,15 @@
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel 
                                                                                                target:self 
-                                                                                               action:@selector(cancelButtonPressed:)];
+                                                                                               action:@selector(cancelButtonTapped:)];
     }
+	
+	if (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) && (self.disableAPIKeyScanning == NO)) {
+		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Scan Key"
+																				  style:UIBarButtonItemStylePlain
+																				 target:self
+																				 action:@selector(scanButtonTapped:)];
+	}
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,7 +78,73 @@
 }
 
 
-#pragma mark - Helpers
+#pragma mark - UI Actions
+
+- (void)cancelButtonTapped:(id)sender {
+    if ([self.delegate respondsToSelector:@selector(ckAuthUserCanceled)]) {
+        [self.delegate ckAuthUserCanceled];
+    }
+	
+	if (self.userCancelled) {
+		self.userCancelled();
+	}
+}
+
+- (void)scanButtonTapped:(id)sender {
+	CKScanViewController *scanViewController = [[CKScanViewController alloc] init];
+	
+	[scanViewController setApiKeyFound:^(NSString *apiKey) {
+		ChimpKit *chimpKit = [[ChimpKit alloc] init];
+		
+		chimpKit.apiKey = apiKey;
+		
+		[chimpKit callApiMethod:@"users/profile" withParams:nil andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
+			if (error) {
+				if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
+					[self.delegate ckAuthFailedWithError:error];
+				}
+				
+				if (self.authFailed) {
+					self.authFailed(error);
+				}
+			} else {
+				NSLog(@"Response String: %@", [request responseString]);
+				
+				NSError *error = nil;
+				id responseData = [NSJSONSerialization JSONObjectWithData:[[request responseString] dataUsingEncoding:NSUTF8StringEncoding]
+																  options:0
+																	error:&error];
+				
+				if (responseData && [responseData isKindOfClass:[NSDictionary class]]) {
+					NSString *role = [responseData objectForKey:@"role"];
+					
+					// TODO: Add Account Name when Available
+					
+					if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:accountName:andRole:)]) {
+						[self.delegate ckAuthSucceededWithApiKey:apiKey accountName:nil andRole:role];
+					}
+					
+					if (self.authSucceeded) {
+						self.authSucceeded(apiKey, nil, role);
+					}
+				} else {
+					if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
+						[self.delegate ckAuthFailedWithError:nil];
+					}
+					
+					if (self.authFailed) {
+						self.authFailed(nil);
+					}
+				}
+			}
+		}];
+	}];
+	
+	[self.navigationController pushViewController:scanViewController animated:YES];
+}
+
+
+#pragma mark - Private Methods
 
 - (void)authWithClientId:(NSString *)yd andSecret:(NSString *)secret {
     self.clientId = yd;
@@ -117,12 +192,6 @@
     [self.connectionData setLength:0];
 }
 
-- (void)cancelButtonPressed:(id)sender {
-    if ([self.delegate respondsToSelector:@selector(ckAuthUserCanceled)]) {
-        [self.delegate ckAuthUserCanceled];
-    }
-}
-
 
 #pragma mark - <UIWebViewDelegate> Methods
 
@@ -163,6 +232,7 @@
     //ToDo: Show error
 }
 
+
 #pragma mark - NSURLConnection delegate methods
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
@@ -201,6 +271,10 @@
 		if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:accountName:andRole:)]) {
 			[self.delegate ckAuthSucceededWithApiKey:apiKey accountName:accountName andRole:role];
 		}
+		
+		if (self.authSucceeded) {
+			self.authSucceeded(apiKey, accountName, role);
+		}
 
         [self cleanup];
     }
@@ -213,7 +287,12 @@
 		[self.delegate ckAuthFailedWithError:error];
 	}
 	
+	if (self.authFailed) {
+		self.authFailed(error);
+	}
+	
     [self cleanup];
 }
+
 
 @end

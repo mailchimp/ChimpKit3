@@ -13,4 +13,6 @@
 @property (nonatomic, copy) void (^apiKeyFound)(NSString *apiKey);
 @property (nonatomic, copy) void (^userCancelled)(void);
 
+- (void)restartScanning;
+
 @end
