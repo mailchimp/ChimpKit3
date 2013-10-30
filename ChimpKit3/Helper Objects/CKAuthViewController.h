@@ -31,6 +31,7 @@
 
 @property (unsafe_unretained, readwrite) id<CKAuthViewControllerDelegate> delegate;
 
+@property (nonatomic, assign) BOOL disableCancelling;
 @property (nonatomic, assign) BOOL disableAPIKeyScanning;
 
 @property (strong, nonatomic) NSString *clientId;

@@ -48,7 +48,7 @@
     self.connectionData = [NSMutableData data];
     
     //If presented modally in a new VC, add the cancel button
-    if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
+    if (([self.navigationController.viewControllers objectAtIndex:0] == self) && (self.disableCancelling == NO)) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel 
                                                                                                target:self 
                                                                                                action:@selector(cancelButtonTapped:)];
