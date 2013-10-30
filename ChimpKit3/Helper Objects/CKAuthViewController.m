@@ -22,13 +22,13 @@
 
 @implementation CKAuthViewController
 
-- (id)initWithClientId:(NSString *)cId clientSecret:(NSString *)cSecret andRedirectUrl:(NSString *)rdirectUrl {
+- (id)initWithClientId:(NSString *)cId clientSecret:(NSString *)cSecret andRedirectUrl:(NSString *)redirectUrl {
     self = [super init];
 	
     if (self) {
         self.clientId = cId;
         self.clientSecret = cSecret;
-        self.redirectUrl = rdirectUrl;
+        self.redirectUrl = redirectUrl;
     }
 	
     return self;
@@ -94,50 +94,17 @@
 	CKScanViewController *scanViewController = [[CKScanViewController alloc] init];
 	
 	[scanViewController setApiKeyFound:^(NSString *apiKey) {
-		ChimpKit *chimpKit = [[ChimpKit alloc] init];
-		
-		chimpKit.apiKey = apiKey;
-		
-		[chimpKit callApiMethod:@"users/profile" withParams:nil andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
-			if (error) {
-				if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
-					[self.delegate ckAuthFailedWithError:error];
-				}
-				
-				if (self.authFailed) {
-					self.authFailed(error);
-				}
-			} else {
-				NSLog(@"Response String: %@", [request responseString]);
-				
-				NSError *error = nil;
-				id responseData = [NSJSONSerialization JSONObjectWithData:[[request responseString] dataUsingEncoding:NSUTF8StringEncoding]
-																  options:0
-																	error:&error];
-				
-				if (responseData && [responseData isKindOfClass:[NSDictionary class]]) {
-					NSString *role = [responseData objectForKey:@"role"];
-					
-					// TODO: Add Account Name when Available
-					
-					if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:accountName:andRole:)]) {
-						[self.delegate ckAuthSucceededWithApiKey:apiKey accountName:nil andRole:role];
-					}
-					
-					if (self.authSucceeded) {
-						self.authSucceeded(apiKey, nil, role);
-					}
-				} else {
-					if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
-						[self.delegate ckAuthFailedWithError:nil];
-					}
-					
-					if (self.authFailed) {
-						self.authFailed(nil);
-					}
-				}
+		if (self.disableAccountDataFetching) {
+			if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:andAccountData:)]) {
+				[self.delegate ckAuthSucceededWithApiKey:apiKey andAccountData:nil];
 			}
-		}];
+			
+			if (self.authSucceeded) {
+				self.authSucceeded(apiKey, nil);
+			}
+		} else {
+			[self fetchAccountDataForAPIKey:apiKey];
+		}
 	}];
 	
 	[self.navigationController pushViewController:scanViewController animated:YES];
@@ -190,6 +157,49 @@
 - (void)cleanup {
     self.connection = nil;
     [self.connectionData setLength:0];
+}
+
+- (void)fetchAccountDataForAPIKey:(NSString *)apiKey {
+	ChimpKit *chimpKit = [[ChimpKit alloc] init];
+	
+	chimpKit.apiKey = apiKey;
+	
+	[chimpKit callApiMethod:@"users/profile" withParams:nil andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
+		if (error) {
+			if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
+				[self.delegate ckAuthFailedWithError:error];
+			}
+			
+			if (self.authFailed) {
+				self.authFailed(error);
+			}
+		} else {
+			NSLog(@"Response String: %@", [request responseString]);
+			
+			NSError *error = nil;
+			id responseData = [NSJSONSerialization JSONObjectWithData:[[request responseString] dataUsingEncoding:NSUTF8StringEncoding]
+															  options:0
+																error:&error];
+			
+			if (responseData && [responseData isKindOfClass:[NSDictionary class]]) {
+				if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:andAccountData:)]) {
+					[self.delegate ckAuthSucceededWithApiKey:apiKey andAccountData:responseData];
+				}
+				
+				if (self.authSucceeded) {
+					self.authSucceeded(apiKey, responseData);
+				}
+			} else {
+				if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
+					[self.delegate ckAuthFailedWithError:nil];
+				}
+				
+				if (self.authFailed) {
+					self.authFailed(nil);
+				}
+			}
+		}
+	}];
 }
 
 
@@ -265,15 +275,17 @@
         //to form the MailChimp API key and notify our delegate
         NSString *dataCenter = [jsonValue objectForKey:@"dc"];
         NSString *apiKey = [NSString stringWithFormat:@"%@-%@", self.accessToken, dataCenter];
-        NSString *accountName = [jsonValue objectForKey:@"accountname"];
-		NSString *role = [jsonValue objectForKey:@"role"];
-
-		if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:accountName:andRole:)]) {
-			[self.delegate ckAuthSucceededWithApiKey:apiKey accountName:accountName andRole:role];
-		}
-		
-		if (self.authSucceeded) {
-			self.authSucceeded(apiKey, accountName, role);
+        
+		if (self.disableAccountDataFetching) {
+			if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:andAccountData:)]) {
+				[self.delegate ckAuthSucceededWithApiKey:apiKey andAccountData:nil];
+			}
+			
+			if (self.authSucceeded) {
+				self.authSucceeded(apiKey, nil);
+			}
+		} else {
+			[self fetchAccountDataForAPIKey:apiKey];
 		}
 
         [self cleanup];

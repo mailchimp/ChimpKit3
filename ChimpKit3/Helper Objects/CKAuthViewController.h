@@ -21,7 +21,7 @@
 
 // You must dismiss the Auth View in all of these methods
 - (void)ckAuthUserCanceled;
-- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey accountName:(NSString *)accountName andRole:(NSString *)role;
+- (void)ckAuthSucceededWithApiKey:(NSString *)apiKey andAccountData:(NSDictionary *)accountData;
 - (void)ckAuthFailedWithError:(NSError *)error;
 
 @end
@@ -33,6 +33,7 @@
 
 @property (nonatomic, assign) BOOL disableCancelling;
 @property (nonatomic, assign) BOOL disableAPIKeyScanning;
+@property (nonatomic, assign) BOOL disableAccountDataFetching;
 
 @property (strong, nonatomic) NSString *clientId;
 @property (strong, nonatomic) NSString *clientSecret;
@@ -47,9 +48,9 @@
 @property (strong, nonatomic) IBOutlet UIWebView *webview;
 
 - (id)initWithClientId:(NSString *)cId andClientSecret:(NSString *)cSecret;
-- (id)initWithClientId:(NSString *)cId clientSecret:(NSString *)cSecret andRedirectUrl:(NSString *)rdirectUrl;
+- (id)initWithClientId:(NSString *)cId clientSecret:(NSString *)cSecret andRedirectUrl:(NSString *)redirectUrl;
 
-@property (nonatomic, copy) void (^authSucceeded)(NSString *apiKey, NSString *accountName, NSString *role);
+@property (nonatomic, copy) void (^authSucceeded)(NSString *apiKey, NSDictionary *accountData);
 @property (nonatomic, copy) void (^authFailed)(NSError *error);
 @property (nonatomic, copy) void (^userCancelled)(void);
 
