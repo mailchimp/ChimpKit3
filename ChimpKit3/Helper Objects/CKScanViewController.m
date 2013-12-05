@@ -63,6 +63,27 @@
 	}
 }
 
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+	[CATransaction begin];
+    [CATransaction setValue:[NSNumber numberWithFloat:duration] forKey:kCATransactionAnimationDuration];
+	
+    if (self.previewLayer) {
+        if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
+            self.previewLayer.affineTransform = CGAffineTransformMakeRotation(0);
+        } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+            self.previewLayer.affineTransform = CGAffineTransformMakeRotation(M_PI/2);
+		} else if (toInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+			self.previewLayer.affineTransform = CGAffineTransformMakeRotation(M_PI);
+        } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+            self.previewLayer.affineTransform = CGAffineTransformMakeRotation(-M_PI/2);
+        }
+		
+        self.previewLayer.frame = self.view.bounds;
+    }
+	
+	[CATransaction commit];
+}
+
 - (void)dealloc {
 	[self.previewLayer removeFromSuperlayer];
 	self.previewLayer = nil;
