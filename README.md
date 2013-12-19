@@ -29,7 +29,7 @@ First, set an API key:
 
     [[ChimpKit sharedKit] setApiKey:apiKey];
 
-You can now make requests.
+You can now make requests. For example, here's how to subscribe an email address:
 
 Using a block:
 
@@ -61,12 +61,12 @@ Using a block:
         }
     }];
 
-Using the delegate pattern call:
+Using the delegate pattern:
 
     NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
     [[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andDelegate:self];
 
-    And implement:
+And implement:
 
     - (void)ckRequestSucceeded:(ChimpKitRequest *)aRequest {
         NSLog(@"HTTP Status Code: %d", aRequest.response.statusCode);
