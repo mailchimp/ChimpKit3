@@ -66,7 +66,7 @@ Using the delegate pattern:
     NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
     [[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andDelegate:self];
 
-And implement:
+And implement the `ChimpKitRequestDelegate` protocol:
 
     - (void)ckRequestSucceeded:(ChimpKitRequest *)aRequest {
         NSLog(@"HTTP Status Code: %d", aRequest.response.statusCode);
