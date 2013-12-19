@@ -97,7 +97,7 @@ And implement the `ChimpKitRequestDelegate` protocol:
 
 Calling other API endpoints works similarly. Read the API [documentation](http://www.mailchimp.com/api/2.0) for details.
 
-###Blocks can be called from a background Queue
+###Blocks and delegate methods can be called from a background queue
 
 The examples above use dispatch_async to call back onto the main queue after parsing the response. If you've set `shouldUseBackgroundThread` to `YES` then ChimpKit will call your block from a background queue so you can parse the JSON response with low impact on interface responsiveness. You should dispatch_* back to the main queue before updating your UI as shown above. You can enable this behavior like so:
 
