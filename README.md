@@ -10,16 +10,18 @@ ChimpKit includes uses ARC. If your project doesn't use ARC, you can enable it p
 
 ##Installation
 
-There are two ways to use ChimpKit.
+There are two ways to add ChimpKit to your project:
 
 Using [Cocoapods](cocoapods.org):
 
     pod "ChimpKit"
 
-Add ChimpKit as a submodule of your git repo by doing something like:
+Or using Git submodules. Add ChimpKit as a submodule of your git repository by doing something like:
 
     cd myrepo
     git submodule add https://github.com/mailchimp/ChimpKit3.git Libs/ChimpKit
+
+Now add ChimpKit to your project by dragging the everything in the `ChimpKit3` directory into your project.
 
 ##Usage
 
@@ -93,7 +95,6 @@ Using the delegate pattern call:
         });
     }
 
-
 Calling other API endpoints works similarly. Read the API [documentation](http://www.mailchimp.com/api/2.0) for details.
 
 ###Blocks can be called from a background Queue
@@ -102,19 +103,11 @@ The examples above use dispatch_async to call back onto the main queue after par
 
     [[ChimpKit sharedKit] setShouldUseBackgroundThread:YES];
 
-###Canceling Requests
-
-You can cancel an in-progress request by passing the "cancel" message:
-
-    [ck cancel];
-
-
 ### Controlling Timeout
 
 ChimpKit defaults to a 10 second timeout. You can change that (globally) to 30 seconds like so:
 
     [[ChimpKit sharedKit] setTimeoutInterval:30.0f];
-
 
 ### MailChimp now supports [OAuth2](http://apidocs.mailchimp.com/oauth2/) and so does ChimpKit:
 
