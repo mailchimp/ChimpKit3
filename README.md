@@ -95,7 +95,7 @@ And implement the `ChimpKitRequestDelegate` protocol:
         });
     }
 
-Calling other API endpoints works similarly. Read the API [documentation](http://www.mailchimp.com/api/2.0) for details.
+Calling other API endpoints works similarly. Read the API [documentation](http://apidocs.mailchimp.com/api/2.0/) for details.
 
 ###Blocks and delegate methods can be called from a background queue
 
