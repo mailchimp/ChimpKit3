@@ -92,19 +92,21 @@ subscribeButtonTitle:(NSString *)subscribeButtonTitle
 		UITextField *textField = [self textFieldAtIndex:0];
 		
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params setValue:self.listId forKey:@"id"];
-        [params setValue:textField.text forKey:@"email_address"];
-        [params setValue:(self.doubleOptIn ? @"true" : @"false") forKey:@"double_optin"];
-		[params setValue:@"true" forKey:@"update_existing"];
+        params[@"id"] = self.listId;
+        params[@"email"] = @{@"email": textField.text};
+        params[@"double_optin"] = (self.doubleOptIn ? @"true" : @"false");
+        params[@"update_existing"] = @"true";
 		
 		[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe"
 								 withParams:params
 					   andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
 						   NSLog(@"Response: %@", request.responseString);
 						   
-						   if ((![request.responseString isEqualToString:@"true"]) || (error)) {
+                           id parsedResponse = [NSJSONSerialization JSONObjectWithData:request.responseData options:0 error:nil];
+                           
+                           if (![parsedResponse isKindOfClass:[NSDictionary class]] || ![parsedResponse[@"email"] isKindOfClass:[NSString class]] || error) {
 							   [self showSubscribeError];
-						   }
+                           }
 					   }];
     }
 }
