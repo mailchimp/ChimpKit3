@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ChimpKit"
-  s.version      = "3.0.0"
+  s.version      = "3.0.1"
   s.summary      = "ChimpKit is an API wrapper for the MailChimp API 2.0."
 
   s.description  = <<-DESC
