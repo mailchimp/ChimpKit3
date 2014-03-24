@@ -13,9 +13,10 @@
 
 @interface CKAuthViewController()
 
-- (void)authWithClientId:(NSString *)yd andSecret:(NSString *)secret;
-- (void)getAccessTokenMetaDataForAccessToken:(NSString *)anAccessToken;
-- (void)cleanup;
+@property (nonatomic, strong) NSURLSession *urlSession;
+
+- (void)authWithClientId:(NSString *)clientId andSecret:(NSString *)secret;
+- (void)getAccessTokenMetaDataForAccessToken:(NSString *)accessToken;
 
 @end
 
@@ -29,6 +30,8 @@
         self.clientId = cId;
         self.clientSecret = cSecret;
         self.redirectUrl = redirectUrl;
+		
+		self.urlSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
     }
 	
     return self;
@@ -45,7 +48,6 @@
     [super viewDidLoad];
 
     self.title = @"Connect to MailChimp";
-    self.connectionData = [NSMutableData data];
     
     //If presented modally in a new VC, add the cancel button
     if (([self.navigationController.viewControllers objectAtIndex:0] == self) && (self.disableCancelling == NO)) {
@@ -113,23 +115,30 @@
 
 #pragma mark - Private Methods
 
-- (void)authWithClientId:(NSString *)yd andSecret:(NSString *)secret {
-    self.clientId = yd;
+- (void)authWithClientId:(NSString *)cliendId andSecret:(NSString *)secret {
+    self.clientId = cliendId;
     self.clientSecret = secret;
+	
+	NSString *extraParam = @"";
+	if (self.enableMultipleLogin) {
+		extraParam = @"&multiple=true";
+	}
     
     //Kick off the auth process
-    NSString *url = [NSString stringWithFormat:@"%@?response_type=code&client_id=%@&redirect_uri=%@",
+    NSString *url = [NSString stringWithFormat:@"%@?response_type=code&client_id=%@&redirect_uri=%@%@",
                      kAuthorizeUrl,
                      self.clientId,
-                     self.redirectUrl];
+                     self.redirectUrl,
+					 extraParam];
+	
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:
                               [NSURL URLWithString:url]];
     [self.webview loadRequest:request];
 }
 
 - (void)getAccessTokenForAuthCode:(NSString *)authCode {
-    [self cleanup];
-
+	[self.spinner setHidden:NO];
+	
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:kAccessTokenUrl]];
     [request setHTTPMethod:@"POST"];
 
@@ -141,22 +150,68 @@
 
     [request setHTTPBody:[postBody dataUsingEncoding:NSUTF8StringEncoding]];
 
-    self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	[[self.urlSession dataTaskWithRequest:request
+						completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+							if (error) {
+								[self connectionFailedWithError:error];
+								return;
+							}
+				  
+							id jsonValue = [NSJSONSerialization JSONObjectWithData:data
+																		   options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
+																			 error:nil];
+				  
+							if (self.enableMultipleLogin) {
+								for (NSDictionary *accessDictionary in jsonValue) {
+									NSString *accessToken = [accessDictionary objectForKey:@"access_token"];
+									
+									//Get the access token metadata so we can return a proper API key
+									[self getAccessTokenMetaDataForAccessToken:accessToken];
+								}
+							} else {
+								NSString *accessToken = [jsonValue objectForKey:@"access_token"];
+								
+								//Get the access token metadata so we can return a proper API key
+								[self getAccessTokenMetaDataForAccessToken:accessToken];
+							}
+						}] resume];
 }
 
-- (void)getAccessTokenMetaDataForAccessToken:(NSString *)anAccessToken {
-    [self cleanup];
-
+- (void)getAccessTokenMetaDataForAccessToken:(NSString *)accessToken {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:kMetaDataUrl]];
     [request setHTTPMethod:@"GET"];
-    [request setValue:[NSString stringWithFormat:@"Bearer %@", anAccessToken] forHTTPHeaderField:@"Authorization"];
-    
-    self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-}
-
-- (void)cleanup {
-    self.connection = nil;
-    [self.connectionData setLength:0];
+    [request setValue:[NSString stringWithFormat:@"Bearer %@", accessToken] forHTTPHeaderField:@"Authorization"];
+	
+	[[self.urlSession dataTaskWithRequest:request
+						completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+							if (error) {
+								[self connectionFailedWithError:error];
+								return;
+							}
+						   
+							id jsonValue = [NSJSONSerialization JSONObjectWithData:data
+																		   options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
+																			 error:nil];
+							
+							[self.spinner setHidden:YES];
+							
+							//And we're done. We can now concat the access token and the data center
+							//to form the MailChimp API key and notify our delegate
+							NSString *dataCenter = [jsonValue objectForKey:@"dc"];
+							NSString *apiKey = [NSString stringWithFormat:@"%@-%@", accessToken, dataCenter];
+						   
+							if (self.disableAccountDataFetching) {
+								if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:andAccountData:)]) {
+									[self.delegate ckAuthSucceededWithApiKey:apiKey andAccountData:nil];
+								}
+								
+								if (self.authSucceeded) {
+									self.authSucceeded(apiKey, nil);
+								}
+							} else {
+								[self fetchAccountDataForAPIKey:apiKey];
+							}
+						}] resume];
 }
 
 - (void)fetchAccountDataForAPIKey:(NSString *)apiKey {
@@ -202,6 +257,18 @@
 	}];
 }
 
+- (void)connectionFailedWithError:(NSError *)error {
+    [self.spinner setHidden:YES];
+	
+    if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
+		[self.delegate ckAuthFailedWithError:error];
+	}
+	
+	if (self.authFailed) {
+		self.authFailed(error);
+	}
+}
+
 
 #pragma mark - <UIWebViewDelegate> Methods
 
@@ -240,70 +307,6 @@
     [self.spinner setHidden:YES];
 
     //ToDo: Show error
-}
-
-
-#pragma mark - NSURLConnection delegate methods
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-    [self.spinner setHidden:NO];
-
-    [self.connectionData setLength:0];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [self.connectionData appendData:data];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    NSString *response = [[NSString alloc] initWithData:self.connectionData encoding:NSUTF8StringEncoding];
-    if (kCKAuthDebug) NSLog(@"Auth Response: %@", response);
-
-    NSDictionary *jsonValue = [NSJSONSerialization JSONObjectWithData:self.connectionData
-                                                              options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
-                                                                error:nil];
-
-    if (!self.accessToken) {
-        self.accessToken = [jsonValue objectForKey:@"access_token"];
-
-        //Get the access token metadata so we can return a proper API key
-        [self getAccessTokenMetaDataForAccessToken:self.accessToken];
-    } else {
-        [self.spinner setHidden:YES];
-
-        //And we're done. We can now concat the access token and the data center
-        //to form the MailChimp API key and notify our delegate
-        NSString *dataCenter = [jsonValue objectForKey:@"dc"];
-        NSString *apiKey = [NSString stringWithFormat:@"%@-%@", self.accessToken, dataCenter];
-        
-		if (self.disableAccountDataFetching) {
-			if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthSucceededWithApiKey:andAccountData:)]) {
-				[self.delegate ckAuthSucceededWithApiKey:apiKey andAccountData:nil];
-			}
-			
-			if (self.authSucceeded) {
-				self.authSucceeded(apiKey, nil);
-			}
-		} else {
-			[self fetchAccountDataForAPIKey:apiKey];
-		}
-
-        [self cleanup];
-    }
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    [self.spinner setHidden:YES];
-
-    if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
-		[self.delegate ckAuthFailedWithError:error];
-	}
-	
-	if (self.authFailed) {
-		self.authFailed(error);
-	}
-	
-    [self cleanup];
 }
 
 

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-#define kCKAuthDebug        0
+#define kCKAuthDebug        1
 
 #define kAuthorizeUrl           @"https://login.mailchimp.com/oauth2/authorize"
 #define kAccessTokenUrl         @"https://login.mailchimp.com/oauth2/token"
@@ -31,6 +31,8 @@
 
 @property (unsafe_unretained, readwrite) id<CKAuthViewControllerDelegate> delegate;
 
+@property (nonatomic, assign) BOOL enableMultipleLogin;
+
 @property (nonatomic, assign) BOOL disableCancelling;
 @property (nonatomic, assign) BOOL disableAPIKeyScanning;
 @property (nonatomic, assign) BOOL disableAccountDataFetching;
@@ -38,11 +40,6 @@
 @property (strong, nonatomic) NSString *clientId;
 @property (strong, nonatomic) NSString *clientSecret;
 @property (strong, nonatomic) NSString *redirectUrl;
-
-@property (strong, nonatomic) NSString *accessToken;
-
-@property (strong, nonatomic) NSURLConnection *connection;
-@property (strong, nonatomic) NSMutableData *connectionData;
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) IBOutlet UIWebView *webview;

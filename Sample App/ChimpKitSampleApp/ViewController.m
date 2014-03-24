@@ -42,8 +42,13 @@
 }
 
 - (IBAction)loginButtonTapped:(id)sender {
-	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"<YOUR CLIENT ID>"
-																			  andClientSecret:@"<YOUR CLIENT SECRET>"];
+//	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"<YOUR CLIENT ID>"
+//																			  andClientSecret:@"<YOUR CLIENT SECRET>"];
+	
+	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"754203189816"
+																			  andClientSecret:@"b719f7cadac146743c177bd41eaf742b"];
+	
+	authViewController.enableMultipleLogin = YES;
 	
     authViewController.delegate = self;
 	
@@ -80,14 +85,20 @@
 #pragma mark - <CKAuthViewControllerDelegate> Methods
 
 - (void)ckAuthUserCanceled {
+	NSLog(@"Auth Cancelled");
+	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)ckAuthSucceededWithApiKey:(NSString *)apiKey andAccountData:(NSDictionary *)accountData {
+	NSLog(@"%@", accountData);
+	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)ckAuthFailedWithError:(NSError *)error {
+	NSLog(@"Auth Failed: %@", [error description]);
+	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
