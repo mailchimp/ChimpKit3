@@ -85,19 +85,19 @@
 #pragma mark - <CKAuthViewControllerDelegate> Methods
 
 - (void)ckAuthUserCanceled {
-	NSLog(@"Auth Cancelled");
+	if (kCKDebug) NSLog(@"Auth Cancelled");
 	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)ckAuthSucceededWithApiKey:(NSString *)apiKey andAccountData:(NSDictionary *)accountData {
-	NSLog(@"%@", accountData);
+	if (kCKDebug) NSLog(@"Auth Data: %@", accountData);
 	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)ckAuthFailedWithError:(NSError *)error {
-	NSLog(@"Auth Failed: %@", [error description]);
+	if (kCKDebug) NSLog(@"Auth Failed: %@", [error description]);
 	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }

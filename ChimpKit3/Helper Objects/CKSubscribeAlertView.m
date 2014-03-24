@@ -100,7 +100,7 @@ subscribeButtonTitle:(NSString *)subscribeButtonTitle
 		[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe"
 								 withParams:params
 					   andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
-						   NSLog(@"Response: %@", request.responseString);
+						   if (kCKDebug) NSLog(@"Response: %@", request.responseString);
 						   
                            id parsedResponse = [NSJSONSerialization JSONObjectWithData:request.responseData options:0 error:nil];
                            

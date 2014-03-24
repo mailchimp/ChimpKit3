@@ -229,7 +229,7 @@
 				self.authFailed(error);
 			}
 		} else {
-			NSLog(@"Response String: %@", [request responseString]);
+			if (kCKDebug) NSLog(@"Response String: %@", [request responseString]);
 			
 			NSError *error = nil;
 			id responseData = [NSJSONSerialization JSONObjectWithData:[[request responseString] dataUsingEncoding:NSUTF8StringEncoding]
