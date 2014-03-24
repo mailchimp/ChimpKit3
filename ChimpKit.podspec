@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ChimpKit"
-  s.version      = "3.0.1"
+  s.version      = "3.0.2"
   s.summary      = "ChimpKit is an API wrapper for the MailChimp API 2.0."
 
   s.description  = <<-DESC
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.ios.deployment_target = '6.1'
 
-  s.source       = { :git => "https://github.com/mailchimp/ChimpKit3.git", :tag => "3.0.1" }
+  s.source       = { :git => "https://github.com/mailchimp/ChimpKit3.git", :tag => "3.0.2" }
 
   s.source_files  = 'ChimpKit3', 'ChimpKit3/**/*.{h,m}'
   s.resources = ['ChimpKit3/**/*.{xib}']
