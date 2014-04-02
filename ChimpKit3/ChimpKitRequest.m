@@ -106,6 +106,12 @@
 	[self.headerFields setValue:value forKey:field];
 }
 
+- (void)startImmediatelyWithCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+	self.completionHandler = aHandler;
+	
+	[self startImmediately];
+}
+
 - (void)startImmediately {
 	[self startBackgroundTask];
 	
@@ -122,42 +128,14 @@
 	[self.connection start];
 }
 
-- (void)startImmediatelyWithCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
-	[self startBackgroundTask];
+- (void)enqueueWithCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+	self.completionHandler = aHandler;
 	
-	NSURLRequest *request = [self createRequest];
-	
-	self.responseData = [[NSMutableData alloc] init];
-	
-	NSOperationQueue *queue = nil;
-	
-	if (self.shouldUseBackgroundThread) {
-		queue = self.backgroundQueue;
-	} else {
-		queue = [NSOperationQueue mainQueue];
-	}
-	
-	[NSURLConnection sendAsynchronousRequest:request
-									   queue:queue 
-						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-							   self.response = (NSHTTPURLResponse *)response;
-							   [self.responseData appendData:data];
-							   self.responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-							   
-							   aHandler(self, error);
-							   
-							   [self finish];
-						   }];
+	[self enqueue];
 }
 
 - (void)enqueue {
-	[self enqueueWithCompletionHandler:nil];
-}
-
-- (void)enqueueWithCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
 	[self startBackgroundTask];
-	
-	self.completionHandler = aHandler;
 	
 	[[ChimpKitRequest connectionQueue] addOperation:self];
 }
@@ -238,15 +216,11 @@
 }
 
 - (void)main {
-	if (self.completionHandler) {
-		[self startImmediatelyWithCompletionHandler:self.completionHandler];
-	} else {
-		[self startImmediately];
-		
-		do {
-			[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-		} while (self.isFinished == NO);
-	}
+	[self startImmediately];
+	
+	do {
+		[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+	} while (self.isFinished == NO);
 }
 
 - (BOOL)isConcurrent {
@@ -283,7 +257,9 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	self.responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
 	
-	if (self.delegate && [self.delegate respondsToSelector:@selector(ckRequestSucceeded:)]) {
+	if (self.completionHandler) {
+		self.completionHandler(self, nil);
+	} else if (self.delegate && [self.delegate respondsToSelector:@selector(ckRequestSucceeded:)]) {
 		[self.delegate ckRequestSucceeded:self];
 	}
 	
@@ -291,7 +267,9 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	if (self.delegate && [self.delegate respondsToSelector:@selector(ckRequestFailed:andError:)]) {
+	if (self.completionHandler) {
+		self.completionHandler(self, error);
+	} else if (self.delegate && [self.delegate respondsToSelector:@selector(ckRequestFailed:andError:)]) {
 		[self.delegate ckRequestFailed:self andError:error];
 	}
 	

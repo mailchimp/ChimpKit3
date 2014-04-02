@@ -272,10 +272,6 @@
 
 #pragma mark - <UIWebViewDelegate> Methods
 
-- (void)webViewDidStartLoad:(UIWebView *)aWebView {
-    [self.spinner setHidden:NO];
-}
-
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     [self.spinner setHidden:YES];
     
@@ -296,6 +292,10 @@
     }
     
     return YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)aWebView {
+    [self.spinner setHidden:NO];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
