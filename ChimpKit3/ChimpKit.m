@@ -49,48 +49,48 @@
 
 #pragma mark - API Methods
 
-- (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
-    [self callApiMethod:aMethod withApiKey:nil params:someParams andCompletionHandler:aHandler];
+- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+    return [self callApiMethod:aMethod withApiKey:nil params:someParams andCompletionHandler:aHandler];
 }
 
-- (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
 	if (aHandler == nil) {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
 			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidCompletionHandler userInfo:nil];
 			[self.delegate methodCall:aMethod failedWithError:error];
 		}
 		
-		return;
+		return nil;
 	}
     
-	[self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:aHandler orDelegate:nil];
+	return [self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:aHandler orDelegate:nil];
 }
 
-- (void)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
-    [self callApiMethod:aMethod withApiKey:nil params:someParams andDelegate:aDelegate];
+- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+    return [self callApiMethod:aMethod withApiKey:nil params:someParams andDelegate:aDelegate];
 }
 
-- (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if (aDelegate == nil) {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
 			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidDelegate userInfo:nil];
 			[self.delegate methodCall:aMethod failedWithError:error];
 		}
 		
-		return;
+		return nil;
 	}
     
-	[self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:nil orDelegate:aDelegate];
+	return [self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:nil orDelegate:aDelegate];
 }
 
-- (void)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if ((anApiKey == nil) && (self.apiKey == nil)) {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
 			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
 			[self.delegate methodCall:aMethod failedWithError:error];
 		}
 		
-		return;
+		return nil;
 	}
 	
 	NSString *urlString = nil;
@@ -112,7 +112,7 @@
                 aHandler(nil, error);
             }
 			
-			return;
+			return nil;
 		}
 		
 		[params setValue:anApiKey forKey:@"apikey"];
@@ -135,6 +135,8 @@
 		
 		[request startImmediately];
 	}
+	
+	return request;
 }
 
 
