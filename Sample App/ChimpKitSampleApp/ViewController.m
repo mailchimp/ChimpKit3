@@ -45,8 +45,8 @@
 //	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"<YOUR CLIENT ID>"
 //																			  andClientSecret:@"<YOUR CLIENT SECRET>"];
 	
-	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"***REMOVED***"
-																			  andClientSecret:@"***REMOVED***"];
+	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"754203189816"
+																			  andClientSecret:@"b719f7cadac146743c177bd41eaf742b"];
 	
 	authViewController.enableMultipleLogin = YES;
 	
