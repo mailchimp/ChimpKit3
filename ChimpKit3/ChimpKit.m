@@ -128,13 +128,15 @@
 	[request setHttpBody:[self encodeRequestParams:params]];
 	[request setShouldUseBackgroundThread:self.shouldUseBackgroundThread];
 	
-	if (aHandler) {
-		[request startImmediatelyWithCompletionHandler:aHandler];
-	} else {
-		[request setDelegate:aDelegate];
-		
-		[request startImmediately];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		if (aHandler) {
+			[request startImmediatelyWithCompletionHandler:aHandler];
+		} else {
+			[request setDelegate:aDelegate];
+			
+			[request startImmediately];
+		}
+	});
 	
 	return request;
 }
