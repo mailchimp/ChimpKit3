@@ -23,8 +23,9 @@
 	// This call fetches lists
     [[ChimpKit sharedKit] callApiMethod:@"lists/list"
 							 withParams:nil
-				   andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
-					   NSLog(@"Here are my lists: %@", request.responseString);
+				   andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+					   NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+					   NSLog(@"Here are my lists: %@", responseString);
 				   }];
 }
 
@@ -42,11 +43,8 @@
 }
 
 - (IBAction)loginButtonTapped:(id)sender {
-//	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"<YOUR CLIENT ID>"
-//																			  andClientSecret:@"<YOUR CLIENT SECRET>"];
-	
-	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"***REMOVED***"
-																			  andClientSecret:@"***REMOVED***"];
+	CKAuthViewController *authViewController = [[CKAuthViewController alloc] initWithClientId:@"<YOUR CLIENT ID>"
+																			  andClientSecret:@"<YOUR CLIENT SECRET>"];
 	
 	authViewController.enableMultipleLogin = YES;
 	
