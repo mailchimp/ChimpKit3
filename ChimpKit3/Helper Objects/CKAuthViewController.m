@@ -219,7 +219,7 @@
 	
 	chimpKit.apiKey = apiKey;
 	
-	[chimpKit callApiMethod:@"users/profile" withParams:nil andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
+	[chimpKit callApiMethod:@"users/profile" withParams:nil andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 		if (error) {
 			if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
 				[self.delegate ckAuthFailedWithError:error];
@@ -229,10 +229,11 @@
 				self.authFailed(error);
 			}
 		} else {
-			if (kCKDebug) NSLog(@"Response String: %@", [request responseString]);
+			NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+			if (kCKDebug) NSLog(@"Response String: %@", responseString);
 			
 			NSError *error = nil;
-			id responseData = [NSJSONSerialization JSONObjectWithData:[[request responseString] dataUsingEncoding:NSUTF8StringEncoding]
+			id responseData = [NSJSONSerialization JSONObjectWithData:data
 															  options:0
 																error:&error];
 			

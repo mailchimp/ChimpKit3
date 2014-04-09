@@ -13,6 +13,14 @@
 #define kErrorDomain	@"com.MailChimp.ChimpKit.ErrorDomain"
 
 
+@interface ChimpKit () <NSURLSessionTaskDelegate>
+
+@property (nonatomic, strong, readonly) NSURLSession *urlSession;
+@property (nonatomic, strong) NSMutableDictionary *dataTasks;
+
+@end
+
+
 @implementation ChimpKit
 
 #pragma mark - Class Methods
@@ -32,6 +40,18 @@
 
 #pragma mark - Properties
 
+- (NSURLSession *)urlSession {
+	NSURLSession *_urlSession = nil;
+	
+	if (!_urlSession) {
+		_urlSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+													delegate:self
+											   delegateQueue:nil];
+	}
+	
+	return _urlSession;
+}
+
 - (void)setApiKey:(NSString *)apiKey {
 	_apiKey = apiKey;
 	
@@ -49,11 +69,11 @@
 
 #pragma mark - API Methods
 
-- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+- (NSUInteger)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
     return [self callApiMethod:aMethod withApiKey:nil params:someParams andCompletionHandler:aHandler];
 }
 
-- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
+- (NSUInteger)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler {
 	if (aHandler == nil) {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
 			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidCompletionHandler userInfo:nil];
@@ -66,11 +86,11 @@
 	return [self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:aHandler orDelegate:nil];
 }
 
-- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+- (NSUInteger)callApiMethod:(NSString *)aMethod withParams:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
     return [self callApiMethod:aMethod withApiKey:nil params:someParams andDelegate:aDelegate];
 }
 
-- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+- (NSUInteger)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if (aDelegate == nil) {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
 			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidDelegate userInfo:nil];
@@ -83,7 +103,7 @@
 	return [self callApiMethod:aMethod withApiKey:anApiKey params:someParams andCompletionHandler:nil orDelegate:aDelegate];
 }
 
-- (ChimpKitRequest *)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
+- (NSUInteger)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if ((anApiKey == nil) && (self.apiKey == nil)) {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(methodCall:failedWithError:)]) {
 			NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
@@ -109,7 +129,7 @@
 			}
             
             if (aHandler) {
-                aHandler(nil, error);
+                aHandler(nil, nil, error);
             }
 			
 			return nil;
@@ -122,23 +142,51 @@
 	}
 	
 	if (kCKDebug) NSLog(@"URL: %@", urlString);
-	    
-	ChimpKitRequest *request = [ChimpKitRequest requestWithURL:[NSURL URLWithString:urlString]];
-	[request setHttpMethod:@"POST"];
-	[request setHttpBody:[self encodeRequestParams:params]];
-	[request setShouldUseBackgroundThread:self.shouldUseBackgroundThread];
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		if (aHandler) {
-			[request startImmediatelyWithCompletionHandler:aHandler];
-		} else {
-			[request setDelegate:aDelegate];
-			
-			[request startImmediately];
-		}
-	});
+	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:urlString]
+																cachePolicy:NSURLRequestUseProtocolCachePolicy
+															timeoutInterval:self.timeoutInterval];
 	
-	return request;
+	[request setHTTPMethod:@"POST"];
+	[request setHTTPBody:[self encodeRequestParams:params]];
+	
+	NSURLSessionDataTask *dataTask = [self.urlSession dataTaskWithRequest:request
+														completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+															if (aHandler) {
+																aHandler(response, data, error);
+															} else {
+																if (error) {
+																	if (aDelegate && [aDelegate respondsToSelector:@selector(ckRequestFailed:andError:)]) {
+																		[aDelegate ckRequestFailed:request andError:error];
+																	}
+																} else {
+																	if (aDelegate && [aDelegate respondsToSelector:@selector(ckRequest:didSucceedWithResponse:Data:)]) {
+																		[aDelegate ckRequest:request didSucceedWithResponse:response Data:data];
+																	}
+																}
+															}
+														}];
+	
+	[self.dataTasks setObject:dataTask forKey:[NSNumber numberWithUnsignedInteger:[dataTask taskIdentifier]]];
+	
+	[dataTask resume];
+	
+	return [dataTask taskIdentifier];
+}
+
+- (void)cancelRequestWithIdentifier:(NSUInteger)identifier {
+	NSURLSessionDataTask *dataTask = [self.dataTasks objectForKey:[NSNumber numberWithUnsignedInteger:identifier]];
+	
+	[dataTask cancel];
+	
+	[self.dataTasks removeObjectForKey:[NSNumber numberWithUnsignedInteger:identifier]];
+}
+
+
+#pragma mark - <NSURLSessionTaskDelegate> Methods
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
+	[self.dataTasks removeObjectForKey:[NSNumber numberWithUnsignedInteger:[task taskIdentifier]]];
 }
 
 
