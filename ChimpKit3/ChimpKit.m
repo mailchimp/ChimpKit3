@@ -43,6 +43,7 @@
 	dispatch_once(&pred, ^{
 		_sharedKit = [[self alloc] init];
 		_sharedKit.timeoutInterval = kDefaultTimeoutInterval;
+		_sharedKit.requests = [[NSMutableDictionary alloc] init];
 	});
 	
 	return _sharedKit;
@@ -164,9 +165,9 @@
 	requestWrapper.delegate = aDelegate;
 	requestWrapper.completionHandler = aHandler;
 	
-	[self.requests setObject:requestWrapper forKey:[NSNumber numberWithUnsignedInteger:[dataTask taskIdentifier]]];
-	
 	[dataTask resume];
+	
+	[self.requests setObject:requestWrapper forKey:[NSNumber numberWithUnsignedInteger:[dataTask taskIdentifier]]];
 	
 	return [dataTask taskIdentifier];
 }
@@ -217,7 +218,7 @@
 		}
 	}
 	
-	[self.requests removeObjectForKey:[NSNumber numberWithUnsignedInteger:[requestWrapper.dataTask taskIdentifier]]];
+	[self.requests removeObjectForKey:[NSNumber numberWithUnsignedInteger:[task taskIdentifier]]];
 }
 
 
