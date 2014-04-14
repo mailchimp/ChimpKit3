@@ -53,7 +53,7 @@
 #pragma mark - Properties
 
 - (NSURLSession *)urlSession {
-	NSURLSession *_urlSession = nil;
+	static NSURLSession *_urlSession = nil;
 	
 	if (!_urlSession) {
 		_urlSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
