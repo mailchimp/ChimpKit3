@@ -42,11 +42,18 @@
 	
 	dispatch_once(&pred, ^{
 		_sharedKit = [[self alloc] init];
-		_sharedKit.timeoutInterval = kDefaultTimeoutInterval;
-		_sharedKit.requests = [[NSMutableDictionary alloc] init];
 	});
 	
 	return _sharedKit;
+}
+
+- (id)init {
+	if (self = [super init]) {
+		self.timeoutInterval = kDefaultTimeoutInterval;
+		self.requests = [[NSMutableDictionary alloc] init];
+	}
+	
+	return self;
 }
 
 
