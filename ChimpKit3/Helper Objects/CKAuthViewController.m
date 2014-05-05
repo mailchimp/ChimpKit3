@@ -14,6 +14,7 @@
 @interface CKAuthViewController()
 
 @property (nonatomic, strong) NSURLSession *urlSession;
+@property (nonatomic, strong) ChimpKit *chimpKit;
 
 - (void)authWithClientId:(NSString *)clientId andSecret:(NSString *)secret;
 - (void)getAccessTokenMetaDataForAccessToken:(NSString *)accessToken;
@@ -22,6 +23,20 @@
 
 
 @implementation CKAuthViewController
+
+
+#pragma mark - Properties
+
+- (ChimpKit *)chimpKit {
+	if (_chimpKit == nil) {
+		_chimpKit = [[ChimpKit alloc] init];
+	}
+	
+	return _chimpKit;
+}
+
+
+#pragma mark - Initialization
 
 - (id)initWithClientId:(NSString *)cId clientSecret:(NSString *)cSecret andRedirectUrl:(NSString *)redirectUrl {
     self = [super init];
@@ -215,11 +230,7 @@
 }
 
 - (void)fetchAccountDataForAPIKey:(NSString *)apiKey {
-	ChimpKit *chimpKit = [[ChimpKit alloc] init];
-	
-	chimpKit.apiKey = apiKey;
-	
-	[chimpKit callApiMethod:@"users/profile" withParams:nil andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+	[self.chimpKit callApiMethod:@"users/profile" withApiKey:apiKey params:nil andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 		if (error) {
 			if (self.delegate && [self.delegate respondsToSelector:@selector(ckAuthFailedWithError:)]) {
 				[self.delegate ckAuthFailedWithError:error];

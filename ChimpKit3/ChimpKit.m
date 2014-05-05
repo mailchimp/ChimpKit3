@@ -15,7 +15,7 @@
 
 @interface ChimpKit () <NSURLSessionTaskDelegate>
 
-@property (nonatomic, strong, readonly) NSURLSession *urlSession;
+@property (nonatomic, strong) NSURLSession *urlSession;
 @property (nonatomic, strong) NSMutableDictionary *requests;
 
 @end
@@ -60,9 +60,7 @@
 #pragma mark - Properties
 
 - (NSURLSession *)urlSession {
-	static NSURLSession *_urlSession = nil;
-	
-	if (!_urlSession) {
+	if (_urlSession == nil) {
 		_urlSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
 													delegate:self
 											   delegateQueue:nil];
