@@ -24,7 +24,8 @@
 @implementation ChimpKitRequest
 
 @synthesize headerFields = _headerFields;
-
+@synthesize executing = _executing;
+@synthesize finished = _finished;
 
 #pragma mark - Properites
 
