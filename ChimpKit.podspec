@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ChimpKit"
-  s.version      = "3.1.0"
+  s.version      = "3.1.1"
   s.summary      = "ChimpKit is an API wrapper for the MailChimp API 2.0."
 
   s.description  = <<-DESC
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 
   s.license      = { :type => 'MIT', :file => 'LICENSE.TXT' }
 
-  s.author       = { "Drew Conner" => "drew@mailchimp.com", "Amro Mousa" => "amro@mailchimp.com" }
+  s.author       = { "Drew Conner" => "drew@mailchimp.com" }
 
   s.platform     = :ios, '7.0'
   s.ios.deployment_target = '7.0'
