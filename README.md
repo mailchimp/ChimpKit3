@@ -1,4 +1,4 @@
-# ChimpKit 3.0.0
+# ChimpKit 3.1.1
 
 ChimpKit is an API wrapper for the [MailChimp API 2.0](http://www.mailchimp.com/api).
 
