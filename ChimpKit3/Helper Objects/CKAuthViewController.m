@@ -72,7 +72,7 @@
     }
 	
 	if (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) && (self.disableAPIKeyScanning == NO)) {
-		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Scan Key"
+		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"qr_code"]
 																				  style:UIBarButtonItemStylePlain
 																				 target:self
 																				 action:@selector(scanButtonTapped:)];

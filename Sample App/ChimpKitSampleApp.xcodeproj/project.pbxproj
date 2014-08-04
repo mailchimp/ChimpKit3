@@ -26,6 +26,7 @@
 		3A9A6AB2169B262E00994BE6 /* CKAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6AAF169B262E00994BE6 /* CKAuthViewController.m */; };
 		3A9A6AB3169B262E00994BE6 /* CKSubscribeAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */; };
 		3AE6C5141850F9910031658A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AE6C5131850F9910031658A /* QuartzCore.framework */; };
+		3AFD960B198FF377002C411A /* ChimpKit.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3AFD960A198FF377002C411A /* ChimpKit.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		3A9A6AB0169B262E00994BE6 /* CKSubscribeAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKSubscribeAlertView.h; sourceTree = "<group>"; };
 		3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKSubscribeAlertView.m; sourceTree = "<group>"; };
 		3AE6C5131850F9910031658A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		3AFD960A198FF377002C411A /* ChimpKit.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ChimpKit.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 				3A9A6AB1169B262E00994BE6 /* CKSubscribeAlertView.m */,
 				3A3AFC1718200CBA00A0FD55 /* CKScanViewController.h */,
 				3A3AFC1818200CBA00A0FD55 /* CKScanViewController.m */,
+				3AFD960A198FF377002C411A /* ChimpKit.xcassets */,
 			);
 			path = "Helper Objects";
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 				3A9A6A84169B135D00994BE6 /* Default-568h@2x.png in Resources */,
 				3A9A6A87169B135D00994BE6 /* MainStoryboard_iPhone.storyboard in Resources */,
 				3A9A6A8A169B135D00994BE6 /* MainStoryboard_iPad.storyboard in Resources */,
+				3AFD960B198FF377002C411A /* ChimpKit.xcassets in Resources */,
 				3A1DB20816CBF08700B5A662 /* CKAuthViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
