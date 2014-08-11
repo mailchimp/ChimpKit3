@@ -38,7 +38,6 @@ typedef void (^ChimpKitRequestCompletionBlock)(NSURLResponse *response, NSData *
 @property (nonatomic, strong) NSString *apiKey;
 @property (nonatomic, strong) NSString *apiURL;
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
-@property (nonatomic, assign) BOOL shouldUseBackgroundThread;
 
 + (ChimpKit *)sharedKit;
 
