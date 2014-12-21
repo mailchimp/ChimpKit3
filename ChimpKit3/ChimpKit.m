@@ -112,7 +112,9 @@
 
 - (NSUInteger)callApiMethod:(NSString *)aMethod withApiKey:(NSString *)anApiKey params:(NSDictionary *)someParams andCompletionHandler:(ChimpKitRequestCompletionBlock)aHandler orDelegate:(id<ChimpKitRequestDelegate>)aDelegate {
 	if ((anApiKey == nil) && (self.apiKey == nil)) {
-		NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
+		NSError *error = [NSError errorWithDomain:kErrorDomain
+                                             code:kChimpKitErrorInvalidAPIKey
+                                         userInfo:@{NSLocalizedDescriptionKey : @"Invalid API key"}];
 		
 		if (aDelegate && [aDelegate respondsToSelector:@selector(ckRequestFailedWithIdentifier:andError:)]) {
 			[aDelegate ckRequestFailedWithIdentifier:0 andError:error];
@@ -172,9 +174,11 @@
 	
 	[dataTask resume];
 	
+#ifdef __IPHONE_OS_VERSION_MIN_REQUIRED
 	dispatch_async(dispatch_get_main_queue(), ^{
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
 	});
+#endif
 	
 	[self.requests setObject:requestWrapper forKey:[NSNumber numberWithUnsignedInteger:[dataTask taskIdentifier]]];
 	
@@ -208,9 +212,12 @@
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
+    
+#ifdef __IPHONE_OS_VERSION_MIN_REQUIRED
 	dispatch_async(dispatch_get_main_queue(), ^{
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 	});
+#endif
 	
 	ChimpKitRequestWrapper *requestWrapper = [self.requests objectForKey:[NSNumber numberWithUnsignedInteger:[task taskIdentifier]]];
 	

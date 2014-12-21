@@ -14,7 +14,8 @@
 
 
 typedef enum {
-	kChimpKitErrorInvalidAPIKey = 0,
+	kChimpKitErrorUnknown = 0,
+    kChimpKitErrorInvalidAPIKey,
 	kChimpKitErrorInvalidDelegate,
 	kChimpKitErrorInvalidCompletionHandler
 } ChimpKitError;
