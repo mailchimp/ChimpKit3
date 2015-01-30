@@ -14,12 +14,16 @@ There are two ways to add ChimpKit to your project:
 
 Using [Cocoapods](cocoapods.org):
 
-    pod "ChimpKit"
+```ruby
+pod 'ChimpKit'
+```
 
 Or using Git submodules. Add ChimpKit as a submodule of your git repository by doing something like:
 
-    cd myrepo
-    git submodule add https://github.com/mailchimp/ChimpKit3.git Libs/ChimpKit
+```bash
+cd myrepo
+git submodule add https://github.com/mailchimp/ChimpKit3.git Libs/ChimpKit
+```
 
 Now add ChimpKit to your project by dragging the everything in the `ChimpKit3` directory into your project.
 
@@ -27,51 +31,27 @@ Now add ChimpKit to your project by dragging the everything in the `ChimpKit3` d
 
 First, set an API key:
 
-    [[ChimpKit sharedKit] setApiKey:apiKey];
+```objective-c
+[[ChimpKit sharedKit] setApiKey:apiKey];
+```
 
 You can now make requests. For example, here's how to subscribe an email address:
 
 Using a block:
 
-    NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
-    [[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
-        NSLog(@"HTTP Status Code: %d", request.response.statusCode);
-        NSLog(@"Response String: %@", request.responseString);
-      
-        if (error) {
-           //Handle connection error
-            NSLog(@"Error, %@", error);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //Update UI here
-            });
-        } else {
-            NSError *parseError = nil;
-            id response = [NSJSONSerialization JSONObjectWithData:request.responseData
-                                                          options:0
-                                                            error:&parseError];
-            if ([response isKindOfClass:[NSDictionary class]]) {
-                id email = [response objectForKey:@"email"];
-                if ([email isKindOfClass:[NSString class]]) {
-                    //Successfully subscribed email address
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        //Update UI here
-                    });
-                }
-            }
-        }
-    }];
+```objective-c
+NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
+[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
+    NSLog(@"HTTP Status Code: %d", request.response.statusCode);
+    NSLog(@"Response String: %@", request.responseString);
 
-Using the delegate pattern:
-
-    NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
-    [[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andDelegate:self];
-
-And implement the `ChimpKitRequestDelegate` protocol:
-
-    - (void)ckRequestSucceeded:(ChimpKitRequest *)aRequest {
-        NSLog(@"HTTP Status Code: %d", aRequest.response.statusCode);
-        NSLog(@"Response String: %@", aRequest.responseString);
-    
+    if (error) {
+        //Handle connection error
+        NSLog(@"Error, %@", error);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //Update UI here
+        });
+    } else {
         NSError *parseError = nil;
         id response = [NSJSONSerialization JSONObjectWithData:request.responseData
                                                       options:0
@@ -86,14 +66,46 @@ And implement the `ChimpKitRequestDelegate` protocol:
             }
         }
     }
+}];
+```
 
-    - (void)ckRequestFailed:(ChimpKitRequest *)aRequest andError:(NSError *)anError {
-        //Handle connection error
-        NSLog(@"Error, %@", anError);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //Update UI here
-        });
+Using the delegate pattern:
+
+```objective-c
+NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
+[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andDelegate:self];
+```
+
+And implement the `ChimpKitRequestDelegate` protocol:
+
+```objective-c
+- (void)ckRequestSucceeded:(ChimpKitRequest *)aRequest {
+    NSLog(@"HTTP Status Code: %d", aRequest.response.statusCode);
+    NSLog(@"Response String: %@", aRequest.responseString);
+
+    NSError *parseError = nil;
+    id response = [NSJSONSerialization JSONObjectWithData:request.responseData
+                                                  options:0
+                                                    error:&parseError];
+    if ([response isKindOfClass:[NSDictionary class]]) {
+        id email = [response objectForKey:@"email"];
+        if ([email isKindOfClass:[NSString class]]) {
+            //Successfully subscribed email address
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //Update UI here
+            });
+        }
     }
+}
+
+- (void)ckRequestFailed:(ChimpKitRequest *)aRequest andError:(NSError *)anError {
+    //Handle connection error
+    NSLog(@"Error, %@", anError);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //Update UI here
+    });
+}
+```
 
 Calling other API endpoints works similarly. Read the API [documentation](http://apidocs.mailchimp.com/api/2.0/) for details.
 
@@ -101,13 +113,17 @@ Calling other API endpoints works similarly. Read the API [documentation](http:/
 
 The examples above use dispatch_async to call back onto the main queue after parsing the response. If you've set `shouldUseBackgroundThread` to `YES` then ChimpKit will call your block from a background queue so you can parse the JSON response with low impact on interface responsiveness. You should dispatch_* back to the main queue before updating your UI as shown above. You can enable this behavior like so:
 
-    [[ChimpKit sharedKit] setShouldUseBackgroundThread:YES];
+```objective-c
+[[ChimpKit sharedKit] setShouldUseBackgroundThread:YES];
+```
 
 ### Controlling Timeout
 
 ChimpKit defaults to a 10 second timeout. You can change that (globally) to 30 seconds like so:
 
-    [[ChimpKit sharedKit] setTimeoutInterval:30.0f];
+```objective-c
+[[ChimpKit sharedKit] setTimeoutInterval:30.0f];
+```
 
 ### MailChimp now supports [OAuth2](http://apidocs.mailchimp.com/oauth2/) and so does ChimpKit:
 
