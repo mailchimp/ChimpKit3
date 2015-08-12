@@ -99,9 +99,11 @@ subscribeButtonTitle:(NSString *)subscribeButtonTitle
 		
 		[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe"
 								 withParams:params
-					   andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-						   NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-						   if (kCKDebug) NSLog(@"Response String: %@", responseString);
+                       andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                           if (kCKDebug) {
+                               NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                               NSLog(@"Response String: %@", responseString);
+                           }
 						   
                            id parsedResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
                            
