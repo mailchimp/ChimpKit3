@@ -240,8 +240,10 @@
 				self.authFailed(error);
 			}
 		} else {
-			NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-			if (kCKDebug) NSLog(@"Response String: %@", responseString);
+            if (kCKDebug) {
+                NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                NSLog(@"Response String: %@", responseString);
+            }
 			
 			NSError *error = nil;
 			id responseData = [NSJSONSerialization JSONObjectWithData:data
