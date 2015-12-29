@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5F67025E1A46E47D00B9B325 /* ChimpKitFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F67025D1A46E47D00B9B325 /* ChimpKitFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F6702641A46E47D00B9B325 /* ChimpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F6702581A46E47C00B9B325 /* ChimpKit.framework */; };
 		5F67026B1A46E47D00B9B325 /* ChimpKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67026A1A46E47D00B9B325 /* ChimpKitTests.m */; };
 		5F6702761A46E4B700B9B325 /* ChimpKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F6702741A46E4B700B9B325 /* ChimpKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -27,7 +26,6 @@
 /* Begin PBXFileReference section */
 		5F6702581A46E47C00B9B325 /* ChimpKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ChimpKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F67025C1A46E47D00B9B325 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5F67025D1A46E47D00B9B325 /* ChimpKitFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChimpKitFramework.h; sourceTree = "<group>"; };
 		5F6702631A46E47D00B9B325 /* ChimpKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChimpKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F6702691A46E47D00B9B325 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F67026A1A46E47D00B9B325 /* ChimpKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChimpKitTests.m; sourceTree = "<group>"; };
@@ -77,7 +75,6 @@
 			children = (
 				5F6702741A46E4B700B9B325 /* ChimpKit.h */,
 				5F6702751A46E4B700B9B325 /* ChimpKit.m */,
-				5F67025D1A46E47D00B9B325 /* ChimpKitFramework.h */,
 				5F67025B1A46E47D00B9B325 /* Supporting Files */,
 			);
 			path = ChimpKit;
@@ -115,7 +112,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F67025E1A46E47D00B9B325 /* ChimpKitFramework.h in Headers */,
 				5F6702761A46E4B700B9B325 /* ChimpKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
