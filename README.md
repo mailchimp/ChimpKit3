@@ -12,7 +12,7 @@ ChimpKit includes uses ARC. If your project doesn't use ARC, you can enable it p
 
 There are two ways to add ChimpKit to your project:
 
-Using [Cocoapods](cocoapods.org):
+Using [CocoaPods](cocoapods.org):
 
 ```ruby
 pod 'ChimpKit'
