@@ -61,7 +61,11 @@
 
 - (NSURLSession *)urlSession {
 	if (_urlSession == nil) {
-		_urlSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        configuration.allowsCellularAccess = YES;
+        configuration.timeoutIntervalForRequest = 60.0;
+		_urlSession = [NSURLSession sessionWithConfiguration:configuration
 													delegate:self
 											   delegateQueue:nil];
 	}
