@@ -9,7 +9,7 @@
 #import "ChimpKit.h"
 
 
-#define kAPI20Endpoint	@"https://%@.api.mailchimp.com/2.0/"
+#define kAPI30Endpoint	@"https://%@.api.mailchimp.com/3.0/"
 #define kErrorDomain	@"com.MailChimp.ChimpKit.ErrorDomain"
 
 
@@ -61,7 +61,11 @@
 
 - (NSURLSession *)urlSession {
 	if (_urlSession == nil) {
-		_urlSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        configuration.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        configuration.allowsCellularAccess = YES;
+        configuration.timeoutIntervalForRequest = 60.0;
+		_urlSession = [NSURLSession sessionWithConfiguration:configuration
 													delegate:self
 											   delegateQueue:nil];
 	}
@@ -76,7 +80,7 @@
 		// Parse out the datacenter and template it into the URL.
 		NSArray *apiKeyParts = [_apiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
-			self.apiURL = [NSString stringWithFormat:kAPI20Endpoint, [apiKeyParts objectAtIndex:1]];
+			self.apiURL = [NSString stringWithFormat:kAPI30Endpoint, [apiKeyParts objectAtIndex:1]];
 		} else {
 			NSAssert(FALSE, @"Please provide a valid API Key");
 		}
@@ -127,30 +131,27 @@
 	
 	NSString *urlString = nil;
 	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:someParams];
-	
+    NSString *userPassword = nil;
+    
 	if (anApiKey) {
 		NSArray *apiKeyParts = [anApiKey componentsSeparatedByString:@"-"];
 		if ([apiKeyParts count] > 1) {
-			NSString *apiURL = [NSString stringWithFormat:kAPI20Endpoint, [apiKeyParts objectAtIndex:1]];
+			NSString *apiURL = [NSString stringWithFormat:kAPI30Endpoint, [apiKeyParts objectAtIndex:1]];
 			urlString = [NSString stringWithFormat:@"%@%@", apiURL, aMethod];
 		} else {
             NSError *error = [NSError errorWithDomain:kErrorDomain code:kChimpKitErrorInvalidAPIKey userInfo:nil];
-
 			if (aDelegate && [aDelegate respondsToSelector:@selector(ckRequestFailedWithIdentifier:andError:)]) {
 				[aDelegate ckRequestFailedWithIdentifier:0 andError:error];
 			}
-            
             if (aHandler) {
                 aHandler(nil, nil, error);
             }
-			
 			return 0;
 		}
-		
-		[params setValue:anApiKey forKey:@"apikey"];
+		userPassword = anApiKey;
 	} else if (self.apiKey) {
 		urlString = [NSString stringWithFormat:@"%@%@", self.apiURL, aMethod];
-		[params setValue:self.apiKey forKey:@"apikey"];
+        userPassword = self.apiKey;
 	}
 	
 	if (kCKDebug) NSLog(@"URL: %@", urlString);
@@ -160,6 +161,11 @@
 															timeoutInterval:self.timeoutInterval];
 	
 	[request setHTTPMethod:@"POST"];
+    
+    NSData *basicAuthCredentials = [[NSString stringWithFormat:@"%@:%@", @"anystring", userPassword] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64AuthCredentials = [basicAuthCredentials base64EncodedStringWithOptions:(NSDataBase64EncodingOptions)0];
+    [request setValue:[NSString stringWithFormat:@"Basic %@", base64AuthCredentials] forHTTPHeaderField:@"Authorization"];
+    
 	[request setHTTPBody:[self encodeRequestParams:params]];
 	
 	NSURLSessionDataTask *dataTask = [self.urlSession dataTaskWithRequest:request];
@@ -240,12 +246,9 @@
 - (NSMutableData *)encodeRequestParams:(NSDictionary *)params {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    
     NSMutableData *postData = [NSMutableData dataWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]];
-	
     return postData;
 }
-
 
 @end
 
