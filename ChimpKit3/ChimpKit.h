@@ -8,13 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+//! Project version number for ChimpKit.
+FOUNDATION_EXPORT double ChimpKitVersionNumber;
+
+//! Project version string for ChimpKit.
+FOUNDATION_EXPORT const unsigned char ChimpKitVersionString[];
 
 #define kCKDebug					0
 #define kDefaultTimeoutInterval		15.0f
 
 
 typedef enum {
-	kChimpKitErrorInvalidAPIKey = 0,
+	kChimpKitErrorInvalidAPIKey = 1,
 	kChimpKitErrorInvalidDelegate,
 	kChimpKitErrorInvalidCompletionHandler
 } ChimpKitError;
