@@ -19,8 +19,7 @@ FOUNDATION_EXPORT const unsigned char ChimpKitVersionString[];
 
 
 typedef enum {
-	kChimpKitErrorUnknown = 0,
-    kChimpKitErrorInvalidAPIKey,
+	kChimpKitErrorInvalidAPIKey = 1,
 	kChimpKitErrorInvalidDelegate,
 	kChimpKitErrorInvalidCompletionHandler
 } ChimpKitError;
