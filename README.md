@@ -40,7 +40,7 @@ You can now make requests. For example, here's how to subscribe an email address
 Using a block:
 
 ```objective-c
-NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
+NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LNAME":@"von Chimpenheimer"}};
 [[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
     NSLog(@"HTTP Status Code: %d", request.response.statusCode);
     NSLog(@"Response String: %@", request.responseString);
