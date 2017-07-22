@@ -41,9 +41,9 @@ Using a block:
 
 ```objective-c
 NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"}, @"merge_vars": @{@"FNAME": @"Freddie", @"LName":@"von Chimpenheimer"}};
-[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andCompletionHandler:^(ChimpKitRequest *request, NSError *error) {
-    NSLog(@"HTTP Status Code: %d", request.response.statusCode);
-    NSLog(@"Response String: %@", request.responseString);
+[[ChimpKit sharedKit] callApiMethod:@"lists/subscribe" withParams:params andCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Response String: %@", responseString);
 
     if (error) {
         //Handle connection error
@@ -52,12 +52,11 @@ NSDictionary *params = @{@"id": listId, @"email": @{@"email": @"foo@example.com"
             //Update UI here
         });
     } else {
-        NSError *parseError = nil;
-        id response = [NSJSONSerialization JSONObjectWithData:request.responseData
-                                                      options:0
-                                                        error:&parseError];
-        if ([response isKindOfClass:[NSDictionary class]]) {
-            id email = [response objectForKey:@"email"];
+        id parsedResponse = [NSJSONSerialization JSONObjectWithData:data 
+                                                            options:0 
+                                                              error:nil];
+        if ([parsedResponse isKindOfClass:[NSDictionary class]]) {
+            id email = [parsedResponse objectForKey:@"email"];
             if ([email isKindOfClass:[NSString class]]) {
                 //Successfully subscribed email address
                 dispatch_async(dispatch_get_main_queue(), ^{
